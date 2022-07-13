@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+</head>
+
+<body class="bg-dark">
+
+
+    <div class="container mt-5 pt-5 ">
+        <h3 class="text-center text-white">Start Game</h3>
+        <div class="col-md-6 mx-auto mt-4">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-light">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            <form method="post" action="/start_game/">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label class="text-white">Enter Event ID</label>
+                        <input type="text" name="Event ID" class="form-control">
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                        <label class="text-white">Therapist ID</label>
+                        <input type="text" name="Therapist ID" class="form-control">
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                        <label class="text-white">Game ID</label>
+                        <input type="text" name="Game ID" class="form-control">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-light">Start Game</button>
+
+            </form>
+
+        </div>
+
+
+    </div>
+
+
+
+</body>
+
+</html>
