@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-kw-r7)=g$e1pl_r@e&ddj73&gili^*bzy=y2hca2tuqekitqzc
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['ec2-13-59-36-47.us-east-2.compute.amazonaws.com']
 
 
 # Application definition
@@ -91,6 +92,7 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [("localhost", 6379)],
+            # "hosts": [("ec2-13-59-36-47.us-east-2.compute.amazonaws.com", 6379)],
         },
     },
 }
@@ -138,5 +140,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-import django_heroku
-django_heroku.settings(locals())
+
+# import django_heroku
+# django_heroku.settings(locals())
