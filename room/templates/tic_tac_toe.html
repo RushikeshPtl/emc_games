@@ -271,6 +271,43 @@
     .tieboard {
         background-color: #665;
     }
+
+    .btn-light {
+    color: #f8f9fa;
+    background-color: #117a8b;
+    border-color: #1d2124;
+    }
+
+    .btn {
+        padding: 0.3rem 3rem;
+        font-size: 1.5rem;
+    }
+
+    .btn-light:hover {
+    color: #f8f9fa;
+    background-color: #17a2b8;
+    border-color: #1d2124;
+    }
+
+    .btn-reload {
+        color: #f8f9fa;
+        background-color: #dc3545;
+        border-color: #1d2124;
+    }
+
+    .btn-reload:hover {
+        color: #f8f9fa;
+        background-color: #bd2130;
+        border-color: #1d2124;
+    }
+
+
+
+    /* .btn-light:not(:disabled):not(.disabled).active, .btn-light:not(:disabled):not(.disabled):active, .show>.btn-light.dropdown-toggle {
+    color: #212529;
+    background-color: #117a8b;
+    border-color: #1d2124;
+    } */
 </style>
 
 <body class="bg-dark">
@@ -295,7 +332,10 @@
 
                 </div>
             </div>
+            <button id="start-btn" class="btn btn-light" hidden="true">PLAY</button>
+            <button id="reload-btn" class="btn btn-reload" hidden="true">RESET</button>
         </div>
+       
     </div>
 
 
@@ -310,9 +350,40 @@
         var username = '{{username}}'
         var role = '{{role}}'
         var player = username.charAt(0)
+        let start_btn = document.getElementById("start-btn")
+        let reset_btn = document.getElementById("reload-btn")
+        if (role == 'Therapist'){
+            start_btn.hidden = false
+            reset_btn.hidden = false
+        }
 
+        document. getElementById('play-board').style.pointerEvents = 'none';
+        
+        start_btn.addEventListener("click", function(){
+            data = {
+                "type": "start_game"
+            }
+            document. getElementById('play-board').style.pointerEvents = 'auto';
+            socket.send(JSON.stringify({data}))
+        })
+
+        function reset_board(){
+            for (let i = 0; i < 9; i++){
+                gameState[parseInt(i)] = ""
+                elementArray[parseInt(i)].innerHTML = ""
+            }
+            document. getElementById('play-board').style.pointerEvents = 'none';
+        }
+
+        reset_btn.addEventListener("click", function(){
+            data = {
+                "type": "reset"
+            }
+            socket.send(JSON.stringify({data}))
+            reset_board()
+        })
         let socket = new WebSocket('ws://localhost:8000/ws/game/' +room_code) 
-        // let socket = new WebSocket('ws://ec2-13-59-36-47.us-east-2.compute.amazonaws.com:8000/ws/game/' +room_code) 
+        // let socket = new WebSocket('ws://ec2-13-59-36-47.us-e ast-2.compute.amazonaws.com:8000/ws/game/' +room_code) 
 
         let gameState = ["","","","","","","","",""]
 
@@ -321,7 +392,7 @@
         elementArray.forEach(function(elem){
             if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
                 elem.addEventListener("touchstart", function (event){
-                    console.log('Element Touched............')
+                    console.log(navigator.userAgent)
                     setText(event.path[0].getAttribute('data-cell-index') , player)
                 })
             }else {
@@ -378,6 +449,7 @@
                 var data = {'type' : 'end' , 'player' : player}
                 socket.send(JSON.stringify({data}))
                 swal("Good job!" , "You won" , "success")
+                reset_board()
             }
 
             checkGameEnd();
@@ -429,10 +501,16 @@
         socket.onmessage = function (e){
             var data = JSON.parse(e.data)
             console.log(data)
-            if(data.payload.type == 'end' && data.payload.player !== player){
+            if(data.payload.type == 'start_game'){
+                document. getElementById('play-board').style.pointerEvents = 'auto'
+            }else if(data.payload.type == 'reset'){
+                reset_board()
+            }else if(data.payload.type == 'end' && data.payload.player !== player){
                 swal("Sorry!" , "You lost" , "error")
+                reset_board()
             }else if(data.payload.type == 'over'){
                 swal("Game over!" , "Game end no one won" , "warning")
+                reset_board()
                 return;
             }else if(data.payload.type == 'running' &&  data.payload.player !== player){
                 setAnotherUserText(data.payload.index , data.payload.player)
