@@ -350,6 +350,8 @@
         var username = '{{username}}'
         var role = '{{role}}'
         var player = username.charAt(0)
+        var mobile_device = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        console.log(mobile_device)
         let start_btn = document.getElementById("start-btn")
         let reset_btn = document.getElementById("reload-btn")
         if (role == 'Therapist'){
@@ -359,13 +361,24 @@
 
         document. getElementById('play-board').style.pointerEvents = 'none';
         
-        start_btn.addEventListener("click", function(){
+        if (mobile_device){
+            start_btn.addEventListener("touchstart", function(){
             data = {
                 "type": "start_game"
             }
             document. getElementById('play-board').style.pointerEvents = 'auto';
             socket.send(JSON.stringify({data}))
         })
+        }else {
+            start_btn.addEventListener("click", function(){
+            data = {
+                "type": "start_game"
+            }
+            document. getElementById('play-board').style.pointerEvents = 'auto';
+            socket.send(JSON.stringify({data}))
+        })
+        }
+        
 
         function reset_board(){
             for (let i = 0; i < 9; i++){
