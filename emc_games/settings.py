@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'room',
     'rest_framework',
     'channels',
+    'quiz'
 ]
 
 MIDDLEWARE = [

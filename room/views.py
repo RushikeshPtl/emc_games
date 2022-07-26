@@ -4,13 +4,15 @@ from .models import *
 from rest_framework.response import Response
 import pdb
 from rest_framework.views import APIView
-
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 # Create your views here.
 class StartGame(APIView):
 
+    @xframe_options_sameorigin
     def get(self, request, role):
         return render(request, role+'.html')
 
+    @xframe_options_sameorigin
     def post(self, request):
         event_id = request.data.get('Event ID')
         therapist_id = request.data.get('Therapist ID')
