@@ -42,14 +42,14 @@ class Answer(models.Model):
     class Meta:
         db_table = 'Answers'
 
-# class Performance(models.Model):
-#     user_id = models.IntegerField()
-#     event_id = models.IntegerField()
-#     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-#     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
-#     is_correct = models.BooleanField()
+class Performance(models.Model):
+    user_id = models.IntegerField()
+    event_id = models.IntegerField()
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    is_correct = models.BooleanField()
 
-#     class Meta:
-#         db_table = 'Performaces'
+    class Meta:
+        db_table = 'Performaces'
 

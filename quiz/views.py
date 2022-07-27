@@ -31,16 +31,14 @@ class QuestionView(APIView):
             quiz_id = request.data.get('quiz_id')
         )
         question.save()
-        for i in range(1, 5):
-            if request.data.get('answer'+str(i)):
-                answer = Answer(
-                    answer = request.data.get('answer'+str(i)).get('answer'),
-                    is_correct = request.data.get('answer'+str(i)).get('is_correct'),
-                    question_id = question.id
-                )
-                answer.save()
-            else:
-                break
+        answers = request.data.get('answers')
+        for ans in answers:
+            answer = Answer(
+                answer = ans.get('answer'),
+                is_correct = ans.get('is_correct'),
+                question_id = question.id
+            )
+            answer.save()
         return JsonResponse({"Question" : "Added"}, status=200)
 
 class GetQuiz(APIView):
@@ -52,21 +50,23 @@ class GetQuiz(APIView):
         else:
             return Response("Please enter valid quiz ID......")
 
-# class PerformanceView(APIView):
-#     def post(self, request):
-#         user_id = request.data.get('User ID')
-#         event_id = request.data.get('Event ID')
-#         quiz_id = request.data.get('Quiz ID')
-#         question_id = request.data.get('Question ID')
-#         answer_id = request.data.get('Answer ID')
-#         is_correct = Answer.objects.get(pk = answer_id).is_correct
-#         Performance.objects.create(user_id = user_id, event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct)
-#         return Response("Performance Recorded......................")
+class PerformanceView(APIView):
+    def post(self, request):
+        user_id = request.data.get('User ID')
+        event_id = request.data.get('Event ID')
+        quiz_id = request.data.get('Quiz ID')
+        question_id = request.data.get('Question ID')
+        answer_id = request.data.get('Answer ID')
+        is_correct = Answer.objects.get(pk = answer_id).is_correct
+        Performance.objects.create(user_id = user_id, event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct)
+        return Response("Performance Recorded......................")
     
-#     def get(self, request, quiz_id):
-#         user_id = request.data.get("user_id")
-#         event_id = request.data.get("event_id")
-#         performance = Performance.objects.filter(quiz_id = quiz_id, user_id = user_id, event_id = event_id)
-#         total_questions = performance.count()
-#         correct_questions = performance.filter(is_correct = True).count()
-
+    def get(self, request, quiz_id):
+        user_id = request.data.get("User ID")
+        event_id = request.data.get("Event ID")
+        performance = Performance.objects.filter(quiz_id = quiz_id, user_id = user_id, event_id = event_id)
+        total_questions = performance.count()
+        correct_questions = performance.filter(is_correct = True).count()
+        performance_data = PerformanceSerializer(performance, many = True)
+        context = {"performance" : performance_data.data, "total_questions" : total_questions, "correct_questions" : correct_questions}
+        return Response(context)
