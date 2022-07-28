@@ -83,7 +83,7 @@ DATABASES = {
         'NAME': 'emc_prod',
         'HOST': 'localhost',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Anveshak@123',
         'PORT': 3306,
     }
 }
