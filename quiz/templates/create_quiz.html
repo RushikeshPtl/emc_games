@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
 
@@ -9,52 +10,94 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-    <title>Hello, world!</title>
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'quiz/css/style.css' %}">
+    <title>HelloHERO</title>
 </head>
 
 <body class="bg-dark">
 
 
-    <div class="container mt-5 pt-5 ">
+    <div class="col-sm-12 mt-3 pt-3 ">
         <h3 class="text-center text-white">Start Game</h3>
-        <div class="col-md-6 mx-auto mt-4">
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-light">
-                {{ message }}
-            </div>
-            {% endfor %}
-            {% endif %}
-            <form method="post" action="/create_quiz/">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md-12 form-group">
-                        <label class="text-white">Enter Quiz Title</label>
-                        <input type="text" name="title" class="form-control">
-                    </div>
-
-                    <div class="col-md-12 form-group">
-                        <label class="text-white">Enter Category</label>
-                        <input type="text" name="category" class="form-control">
-                    </div>
-
-                    <div class="col-md-12 form-group">
-                        <label class="text-white">Enter Therapist ID</label>
-                        <input type="text" name="therapist_id" class="form-control">
-                    </div>
+        <div class="mdc-typography center">
+            <span class="mdc-typography--headline5 text-white text-center">HelloHERO Quiz</span>
+            <p class="mdc-typography--subtitle1 text-white">Let's create your first quiz</p>
+        </div>
+        <div class="row col-md-12">
+            <div class="col-md-8  mx-auto add-question-container">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-light">
+                    {{ message }}
                 </div>
-                <button type="submit" class="btn btn-light">Create Quiz & Add Questions</button>
+                {% endfor %}
+                {% endif %}
+                <form method="post" action="/create_quiz/">
+                    {% csrf_token %}
+                    <div class="col-md-12">
+                        <div class="col-md-5 form-group">
+                            <label class="text-white">Enter Quiz Title</label>
+                            <input type="text" name="title" class="form-control">
+                        </div>
 
-            </form>
+                        <div class="col-md-5 form-group">
+                            <label class="text-white">Enter Category</label>
+                            <input type="text" name="category" class="form-control">
+                        </div>
 
+                        <div class="col-md-5 form-group">
+                            <label class="text-white">Enter Therapist ID</label>
+                            <input type="number" name="therapist_id" class="form-control">
+                        </div>
+                        <div class="col-md-5">
+                            <button type="submit" class="btn btn-light" id="create-quiz-btn">Add Questions</button>
+                        </div>
+                    </div>
+
+
+                </form>
+
+            </div>
+            <div class="col-md-4 preview-container">
+                <span class="mdc-typography--headline5 text-white text-center">Preview</span>
+                {% include 'partials/preview_quiz_modal.html' %}
+                <div class="mt-2">
+                    <button
+                        class="mdc-button mdc-button--icon-leading  mdc-button--raised d-none add-more-questions-btn">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__focus-ring"></span>
+                        
+                        <i class="material-icons mdc-button__icon" aria-hidden="true">add</i>
+                        <span class="mdc-button__label text-capitalize">
+
+                            Add More Questions
+                        </span>
+                    </button>
+                </div>
+
+            </div>
         </div>
 
 
+        {% include 'partials/add_quiz_questions_modal.html' %}
+
+        <aside class="mdc-snackbar quiz-err-snackbar">
+            <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+                <div class="mdc-snackbar__label" aria-atomic="false">
+                    Please provide all the fields!
+                </div>
+
+            </div>
+        </aside>
     </div>
-
-
-
+    {% load static %}
+    <script type="text/javascript" src="{% static 'quiz/js/jquery-3.6.0.min.js' %}"></script>
+    <script async type="text/javascript" src="{% static 'quiz/js/index.js' %}"></script>
 </body>
 
 </html>

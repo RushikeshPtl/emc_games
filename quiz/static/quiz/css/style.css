@@ -1,0 +1,82 @@
+.center {
+  text-align: center;
+}
+
+.err {
+  color: red;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+#add-question .spinner-border{
+  color: #fff !important;
+}
+
+.add-question-modal .question-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-question-modal .content-container {
+  width: 500px;
+  min-height: 400px;
+}
+
+.add-question-modal .mdc-dialog__title + .mdc-dialog__content {
+  padding-top: 5px;
+}
+
+.question-container .form-field {
+  width: 100%;
+}
+
+.ans-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ans-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ans-row div:first-child {
+  width: 70%;
+}
+
+.ans-row .custom-input {
+  width: 100%;
+}
+
+#question-helper-txt div {
+  color: red;
+  /* opacity: 1; */
+}
+
+.mdc-card.card-max-h {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.quiz-err-snackbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: auto;
+  bottom: auto;
+}
+
+.quiz-err-snackbar .mdc-snackbar__surface {
+  background-color: rgb(251, 26, 26);
+}
+
+input[name="therapist_id"]::-webkit-inner-spin-button, 
+input[name="therapist_id"]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
