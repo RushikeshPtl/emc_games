@@ -12,10 +12,16 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -75,6 +81,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'emc_games.wsgi.application'
 ASGI_APPLICATION = 'emc_games.asgi.application'
 
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -84,7 +91,7 @@ DATABASES = {
         'NAME': 'emc_prod',
         'HOST': 'localhost',
         'USER': 'root',
-        'PASSWORD': 'Anveshak@123',
+        'PASSWORD': env('DATABASE_PASSWORD'),
         'PORT': 3306,
     }
 }
