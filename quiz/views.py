@@ -1,9 +1,10 @@
+import json
 from django.shortcuts import render
 from rest_framework.response import Response
 from .models import *
 from rest_framework.views import APIView
 from django.http import JsonResponse
-from django.core import serializers
+from django.core import serializers as sr
 import pdb
 from .serializers import *
 # Create your views here.
@@ -19,8 +20,8 @@ class QuizView(APIView):
             therapist_id = request.data.get('therapist_id')
         )
         quiz.save()
-        quiz_json = serializers.serialize('json', [quiz, ])
-        return JsonResponse({"quiz" : quiz_json}, status=200)
+        quiz_data = QuizSerializer(quiz)
+        return Response(quiz_data.data)
 
 
 class QuestionView(APIView):
