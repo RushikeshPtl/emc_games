@@ -15,7 +15,6 @@ class QuizView(APIView):
         return render(request, 'create_quiz.html')
 
     def post(self, request):
-        pdb.set_trace()
         quiz = Quiz(
             title = request.data.get('title'),
             category = request.data.get('category'),
