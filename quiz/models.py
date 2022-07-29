@@ -14,6 +14,9 @@ class Quiz(models.Model):
     def get_questions(self):
         return self.question_set.all()
 
+    def __str__(self):
+        return self.title
+
 
 difficulty_choices = (
     ('Easy', 'Easy'),
@@ -32,6 +35,9 @@ class Question(models.Model):
     
     def get_answers(self):
         return self.answer_set.all()
+    
+    def __str__(self):
+        return self.question
 
 
 class Answer(models.Model):
@@ -41,6 +47,9 @@ class Answer(models.Model):
 
     class Meta:
         db_table = 'Answers'
+    
+    def __str__(self):
+        return self.answer
 
 class Performance(models.Model):
     user_id = models.IntegerField()
@@ -52,4 +61,7 @@ class Performance(models.Model):
 
     class Meta:
         db_table = 'Performaces'
+
+    def __str__(self):
+        return self.user_id
 

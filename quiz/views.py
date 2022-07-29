@@ -1,4 +1,5 @@
 import json
+from urllib import response
 from django.shortcuts import render
 from rest_framework.response import Response
 from .models import *
@@ -14,6 +15,7 @@ class QuizView(APIView):
         return render(request, 'create_quiz.html')
 
     def post(self, request):
+        pdb.set_trace()
         quiz = Quiz(
             title = request.data.get('title'),
             category = request.data.get('category'),
@@ -26,30 +28,45 @@ class QuizView(APIView):
 
 class QuestionView(APIView):
     def post(self, request):
-        question = Question(
-            question = request.data.get('question'),
-            difficulty = request.data.get('difficulty'),
-            quiz_id = request.data.get('quiz_id')
-        )
-        question.save()
-        answers = request.data.get('answers')
-        for ans in answers:
-            answer = Answer(
-                answer = ans.get('answer'),
-                is_correct = ans.get('is_correct'),
-                question_id = question.id
+        try:
+            question = Question(
+                question = request.data.get('question'),
+                difficulty = request.data.get('difficulty'),
+                quiz_id = request.data.get('quiz_id')
             )
-            answer.save()
-        return JsonResponse({"Question" : "Added"}, status=200)
+            question.save()
+            answers = request.data.get('answers')
+            for ans in answers:
+                answer = Answer(
+                    answer = ans.get('answer'),
+                    is_correct = ans.get('is_correct'),
+                    question_id = question.id
+                )
+                answer.save()
+            return JsonResponse({"Question" : "Added"}, status=200)
+        except Exception as e:
+            print(e)
+
+
+
+class GetQuizList(APIView):
+    def get(self, request):
+        quizList = Quiz.objects.all().values("title", "id")       
+        return Response({"quizList":quizList}, status=200)
+
 
 class GetQuiz(APIView):
     def get(self, request, id):
-        quiz = Quiz.objects.filter(pk=id).first()
-        if quiz:
-            quiz_data = QuizSerializer(quiz)
-            return Response(quiz_data.data)
+        if id:
+            quiz = Quiz.objects.filter(pk=id).first()
+            if quiz:
+                quiz_data = QuizSerializer(quiz)
+                return Response(quiz_data.data)
+            else:
+                return Response("Please enter valid quiz ID......")
         else:
-            return Response("Please enter valid quiz ID......")
+            quizList = Quiz.objects.all().values("title", "id")         
+            return Response({"quizList":quizList}, status=200)
 
 class PerformanceView(APIView):
     def post(self, request):

@@ -8,6 +8,10 @@ class Game(models.Model):
     type = models.CharField("type", max_length=100)
     age_group = models.CharField('age_group', max_length=100)
 
+    def __str__(self):
+        return self.title+"|"+self.type+"|"+self.age_group
+    
+
 class Room(models.Model):
     room_code = models.IntegerField()
     therapist_id = models.IntegerField()
@@ -17,3 +21,6 @@ class Room(models.Model):
 
     class Meta:
         db_table = 'Room'
+
+    def __str__(self):
+        return self.room_code
