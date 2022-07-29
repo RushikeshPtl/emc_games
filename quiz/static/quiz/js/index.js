@@ -123,46 +123,60 @@ select.listen('MDCSelect:change', () => {
 //   console.log(questionData)
 // })
 
-const createQuizQuestionsPreview = () => {
+const createQuizQuestionsPreview = (data) => {
   $('#add-question .spinner-border').removeClass('d-none')
   $('#add-question .mdc-button__label').addClass('d-none')
   console.log(questions)
-  $.post('/add_question/', questions[0], (resp) => {
-    console.log(resp)
-    let parent = $('.quiz-preview-parent')
-    $('.quiz-preview-parent').empty()
+  fetch('/add_question/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then((resp) => resp.json())
+    .then((resp) => {
+      console.log(resp)
+      let parent = $('.quiz-preview-parent')
+      $('.quiz-preview-parent').empty()
 
-    questions.forEach((item, i) => {
-      let q = $('.quiz-question-row.d-none').clone()
-      q.attr('id', `quiz-${i}`)
-      q.find('.quiz-no-txt').text(`Q${i + 1}`)
-      q.find('.quiz-question-txt').text(item.question)
-      item.answers.forEach((ans, index) => {
-        let checkboxClone = $('.ans-radio-btn.d-none').clone()
-        checkboxClone
-          .find('.mdc-radio__native-control')
-          .attr('id', `ans-${index}`)
-        checkboxClone.find('label').attr('for', `ans-${index}`).text(ans.answer)
-        checkboxClone.removeClass('d-none')
-        q.find('.ans-options').append(checkboxClone)
+      questions.forEach((item, i) => {
+        let q = $('.quiz-question-row.d-none').clone()
+        q.attr('id', `quiz-${i}`)
+        q.find('.quiz-no-txt').text(`Q${i + 1}`)
+        q.find('.quiz-question-txt').text(item.question)
+        item.answers.forEach((ans, index) => {
+          let checkboxClone = $('.ans-radio-btn.d-none').clone()
+          checkboxClone
+            .find('.mdc-radio__native-control')
+            .attr('id', `ans-${index}`)
+          checkboxClone
+            .find('label')
+            .attr('for', `ans-${index}`)
+            .text(ans.answer)
+          checkboxClone.removeClass('d-none')
+          q.find('.ans-options').append(checkboxClone)
+        })
+
+        q.removeClass('d-none')
+        parent.append(q)
       })
 
-      q.removeClass('d-none')
-      parent.append(q)
+      parent.removeClass('d-none')
+      dialog.close()
+      $('#question-txt').val('')
+      select.selectedIndex = -1 //--- reset the select dropdown value ----//
+      $('.ans-container').empty()
+      $('.answers-section').addClass('d-none')
+      $('.subheader-txt').removeClass('err')
+      $('.add-more-questions-btn').removeClass('d-none')
+      $('#create-quiz-btn').addClass('d-none')
+      $('#add-question .spinner-border').addClass('d-none')
+      $('#add-question .mdc-button__label').removeClass('d-none')
     })
-
-    parent.removeClass('d-none')
-    dialog.close()
-    $('#question-txt').val('')
-    select.selectedIndex = -1 //--- reset the select dropdown value ----//
-    $('.ans-container').empty()
-    $('.answers-section').addClass('d-none')
-    $('.subheader-txt').removeClass('err')
-    $('.add-more-questions-btn').removeClass('d-none')
-    $('#create-quiz-btn').addClass('d-none')
-    $('#add-question .spinner-border').addClass('d-none')
-    $('#add-question .mdc-button__label').removeClass('d-none')
-  })
+  // $.post('/add_question/', questions[0], (resp) => {
+  //   console.log(resp)
+  // })
 }
 
 const checkFormFields = () => {
@@ -212,7 +226,7 @@ const checkFormFields = () => {
   }
   questions.push(questionData)
 
-  createQuizQuestionsPreview()
+  createQuizQuestionsPreview(questionData)
 }
 
 const saveQuizData = () => {
