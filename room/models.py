@@ -23,4 +23,4 @@ class Room(models.Model):
         db_table = 'Room'
 
     def __str__(self):
-        return self.room_code
+        return str(self.room_code)
