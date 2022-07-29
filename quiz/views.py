@@ -69,13 +69,15 @@ class GetQuiz(APIView):
 
 class PerformanceView(APIView):
     def post(self, request):
-        user_id = request.data.get('User ID')
-        event_id = request.data.get('Event ID')
-        quiz_id = request.data.get('Quiz ID')
-        question_id = request.data.get('Question ID')
-        answer_id = request.data.get('Answer ID')
-        is_correct = Answer.objects.get(pk = answer_id).is_correct
-        Performance.objects.create(user_id = user_id, event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct)
+        user_id = request.data.get('user_id')
+        event_id = request.data.get('event_id')
+        quiz_id = request.data.get('quiz_id')
+        answers = request.data.get('answers')
+        for answer in answers:
+            question_id = answer.get('question_id')
+            answer_id = answer.get('answer_id')
+            is_correct = Answer.objects.get(pk = answer_id).is_correct
+            Performance.objects.create(user_id = user_id, event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct)
         return Response("Performance Recorded......................")
     
     def get(self, request, quiz_id):
