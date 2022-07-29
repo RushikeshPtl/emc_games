@@ -52,7 +52,7 @@ class QuestionView(APIView):
 class GetQuizList(APIView):
     def get(self, request):
         quizList = Quiz.objects.all().values("title", "id")       
-        return Response({"quizList":quizList}, status=200)
+        return render(request, 'quiz_list.html', context={'quizes' : quizList})
 
 
 class GetQuiz(APIView):
