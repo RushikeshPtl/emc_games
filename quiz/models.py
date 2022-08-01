@@ -56,7 +56,7 @@ class Performance(models.Model):
     event_id = models.IntegerField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer, null=True, on_delete=models.CASCADE)
     is_correct = models.BooleanField()
 
     class Meta:

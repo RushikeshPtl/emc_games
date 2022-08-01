@@ -38,4 +38,5 @@ class PerformanceSerializer(ModelSerializer):
         return obj.question.question
     
     def get_answer(self, obj):
-        return obj.answer.answer
+        if obj.answer:
+            return obj.answer.answer
