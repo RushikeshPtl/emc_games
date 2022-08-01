@@ -237,6 +237,8 @@ const saveQuizData = () => {
     title: $('input[name="title"]').val(),
     category: $('input[name="category"]').val(),
     therapist_id: parseInt($('input[name="therapist_id"]').val()),
+    csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+   
   }
   // fetch(`${API_URL}/create_quiz/`, {
   //   method: 'POST',
@@ -280,7 +282,8 @@ $('#create-quiz-btn')
       !(
         $('input[name="title"]').val().length > 0 &&
         $('input[name="category"]').val().length > 0 &&
-        $('input[name="therapist_id"]').val().length > 0
+        $('input[name="therapist_id"]').val().length > 0 &&
+        $('input[name="csrfmiddlewaretoken"]').val().length > 0
       )
     ) {
       const snackbar = snackbars.find((ele) =>
