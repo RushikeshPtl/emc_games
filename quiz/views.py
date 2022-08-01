@@ -35,6 +35,7 @@ class QuestionView(APIView):
             )
             question.save()
             answers = request.data.get('answers')
+            pdb.set_trace()
             for ans in answers:
                 answer = Answer(
                     answer = ans.get('answer'),
