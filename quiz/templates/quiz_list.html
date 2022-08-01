@@ -1,7 +1,69 @@
-<html>
-    <body>
-        {% for quiz in quizes %}
-        <h1>{{quiz.title}}</h1><br>
-        {% endfor %}
-    </body>
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'quiz/css/style.css' %}">
+    <title>HelloHERO</title>
+</head>
+
+<body class="bg-dark">
+    <div class="mdc-typography center">
+        <span class="mdc-typography--headline5 text-white text-center">HelloHERO Quiz</span>
+    </div>
+    <div class="row col-md-12 mt-3 pt-3">
+        {%if quizes %}
+        <div class="col-md-4">
+            <h5 class="text-white pl-1">Quizes</h5>
+            <div class="quiz-list-container">
+                {% for quiz in quizes %}
+                <div class="mdc-card mdc-card-outline mb-1 quiz-card" id="{{quiz.id}}">
+                    <div class="mdc-card__primary-action p-2" tabindex="0">
+                        <span class="demo-card__title mdc-typography mdc-typography--headline6">{{quiz.title}}</span>
+                        <div class="d-flex"><span>Category: </span><span
+                                class="demo-card__subtitle mdc-typography mdc-typography--subtitle1 pl-2">
+                                {{quiz.category}}</span>
+                        </div>
+
+                        <div class="mdc-card__ripple"></div>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-8 play-quiz">
+            {% include 'partials/preview_quiz_modal.html' %}
+            <div class="mt-2 text-center">
+                <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised d-none"
+                    id="save-play-quiz-btn">
+                    <div class="mdc-button__ripple"></div>
+                    <div class="spinner-border d-none" role="status">
+                    </div>
+                    <span class="mdc-button__label">Save</span>
+                </button>
+            </div>
+
+        </div>
+        {% else %}
+        <div class="spinner-border" role="status">
+        </div>
+        {% endif %}
+
+    </div>
+    <script type="text/javascript" src="{% static 'quiz/js/jquery-3.6.0.min.js' %}"></script>
+    <script async type="text/javascript" src="{% static 'quiz/js/get_quiz.js' %}"></script>
+</body>
+
 </html>

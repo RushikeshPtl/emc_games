@@ -1,3 +1,4 @@
+const API_URL = new URL(window.location).origin
 var checkboxes = []
 var inputFields = []
 var questions = []
@@ -11,7 +12,7 @@ const attachMDCEffect = () => {
     mdc.textField.MDCTextField.attachTo(ele)
   )
   const chboxes = document.querySelectorAll('.mdc-checkbox')
-  checkboxes = [...chboxes].forEach(
+  checkboxes = [...chboxes].map(
     (ele) => new mdc.checkbox.MDCCheckbox.attachTo(ele)
   )
   const bars = document.querySelectorAll('.mdc-snackbar')
@@ -131,6 +132,7 @@ const createQuizQuestionsPreview = (data) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRFToken': document.cookie.split('=')[1],
     },
     body: JSON.stringify(data),
   })
@@ -150,6 +152,7 @@ const createQuizQuestionsPreview = (data) => {
           checkboxClone
             .find('.mdc-radio__native-control')
             .attr('id', `ans-${index}`)
+
           checkboxClone
             .find('label')
             .attr('for', `ans-${index}`)
@@ -235,6 +238,17 @@ const saveQuizData = () => {
     category: $('input[name="category"]').val(),
     therapist_id: parseInt($('input[name="therapist_id"]').val()),
   }
+  // fetch(`${API_URL}/create_quiz/`, {
+  //   method: 'POST',
+  //   headers: {
+  //     'X-CSRFToken': document.cookie.split('=')[1],
+  //   },
+  //   body: JSON.stringify(data),
+  // })
+  //   .then((resp) => resp.json())
+  //   .then((resp) => {
+  //     console.log(resp)
+  //   })
 
   $.post('/create_quiz/', data, (resp) => {
     console.log(resp)
