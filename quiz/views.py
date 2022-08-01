@@ -51,7 +51,7 @@ class QuestionView(APIView):
 
 class GetQuizList(APIView):
     def get(self, request):
-        quizList = Quiz.objects.all().values("title", "id")       
+        quizList = Quiz.objects.all().values("title", "id", "category")       
         return render(request, 'quiz_list.html', context={'quizes' : quizList})
 
 
