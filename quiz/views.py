@@ -79,7 +79,13 @@ class PerformanceView(APIView):
             answer_id = answer.get('answer_id')
             is_correct = Answer.objects.get(pk = answer_id).is_correct
             Performance.objects.create(user_id = user_id, event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct)
-        return Response("Performance Recorded......................")
+        performance = Performance.objects.filter(quiz_id = quiz_id, user_id = user_id, event_id = event_id)
+        total_questions = performance.count()
+        correct_questions = performance.filter(is_correct = True).count()
+        performance_data = PerformanceSerializer(performance, many = True)
+        percent = (correct_questions/total_questions) * 100
+        context = {"performance" : performance_data.data, "total_questions" : total_questions, "correct_questions" : correct_questions, "percent" : percent}
+        return Response(context)
     
     def get(self, request, quiz_id):
         user_id = request.data.get("User ID")
