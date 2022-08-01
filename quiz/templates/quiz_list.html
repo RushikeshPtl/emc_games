@@ -45,6 +45,7 @@
         </div>
         <div class="col-md-8 play-quiz">
             {% include 'partials/preview_quiz_modal.html' %}
+            {% include 'partials/performance_show_modal.html' %}
             <div class="mt-2 text-center">
                 <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised d-none"
                     id="save-play-quiz-btn">
@@ -55,6 +56,7 @@
                 </button>
             </div>
 
+            <!-- <img src="{% static 'quiz/images/failed.png' %}" width="250px" height="auto"/>             -->
         </div>
         {% else %}
         <div class="spinner-border" role="status">

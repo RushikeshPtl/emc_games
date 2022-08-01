@@ -3,6 +3,7 @@ let getQuizResponse
 let checked = []
 var radioBtns = []
 var inputFields = []
+var dialog = null
 
 const attachMDCEffect = () => {
   let inputs = document.querySelectorAll('.mdc-text-field')
@@ -19,6 +20,9 @@ const attachMDCEffect = () => {
   //   const bars = document.querySelectorAll('.mdc-snackbar')
   //   snackbars = [...bars].map((ele) => new mdc.snackbar.MDCSnackbar.attachTo(ele))
   //   console.log(snackbars)
+  dialog = new mdc.dialog.MDCDialog(
+    document.querySelector('.performance-show-modal')
+  )
 }
 
 const attachQuizAnsCheckboxes = () => {
@@ -125,16 +129,35 @@ const saveQuizData = () => {
     .then((resp) => resp.json())
     .then((response) => {
       console.log(response)
+      $('.performance-show-modal .score-txt').text(
+        `Score- ${response.percent}`
+      )
+      if (response.percent === 100) {
+        $('.performance-show-modal .success-txt').text('Hurray!! You won!')
+        $('.performance-show-modal img.success').removeClass('d-none')
+        $('.performance-show-modal img.failed').addClass('d-none')
+      } else if (response.percent < 90) {
+        console.log('heheh')
+        $('.performance-show-modal .success-txt').text('Not Bad!! keep trying!')
+        $('.performance-show-modal img.success').addClass('d-none')
+        $('.performance-show-modal img.failed').removeClass('d-none')
+      }
+      dialog.open()
     })
     .catch((err) => {
       console.log(err)
     })
 }
 
+// Illustration by <a href="https://icons8.com/illustrations/author/oZpGJx8ts63Q">Thierry Fousse</a> from <a href="https://icons8.com/illustrations">Ouch!</a>
+
 $('#save-play-quiz-btn')
   .off()
   .click((evt) => {
     evt.preventDefault()
+    console.log(dialog.foundation)
+    // dialog.open()
+    // dialog.releaseFocus()
     saveQuizData()
   })
 

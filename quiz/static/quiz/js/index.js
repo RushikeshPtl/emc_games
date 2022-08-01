@@ -237,7 +237,7 @@ const saveQuizData = () => {
     title: $('input[name="title"]').val(),
     category: $('input[name="category"]').val(),
     therapist_id: parseInt($('input[name="therapist_id"]').val()),
-    csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+    csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),  //----- this is hidden field provided by Django for post request ----//
    
   }
   // fetch(`${API_URL}/create_quiz/`, {

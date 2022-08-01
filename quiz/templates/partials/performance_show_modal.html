@@ -1,0 +1,23 @@
+{% load static %}
+<div class="mdc-dialog performance-show-modal">
+    <div class="mdc-dialog__container">
+        <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
+            aria-describedby="my-dialog-content" style="padding: 20px;">
+            <div class="d-flex  flex-column align-items-center" style="width:500px;">
+                <p class="success-txt mdc-typography--headline5"></p>
+                <p class="score-txt mdc-typography--headline5"></p>
+                <img class="success" src="{% static 'quiz/images/winner.png' %}" width="250px" height="auto" />
+                <img class="failed" src="{% static 'quiz/images/failed.png' %}" width="250px" height="auto" />
+            </div>
+            <div class="mdc-dialog__actions">
+                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Cancel</span>
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="mdc-dialog__scrim"></div>
+</div>
