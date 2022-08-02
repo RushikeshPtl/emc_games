@@ -3,11 +3,12 @@ from urllib import response
 from django.shortcuts import render
 from rest_framework.response import Response
 from .models import *
-from rest_framework.views import APIView
+from rest_framework.views import APIView, View
 from django.http import JsonResponse
 from django.core import serializers as sr
 import pdb
 from .serializers import *
+import random
 # Create your views here.
 
 class QuizView(APIView):
@@ -54,19 +55,25 @@ class GetQuizList(APIView):
         quizList = Quiz.objects.all().values("title", "id", "category")       
         return render(request, 'quiz_list.html', context={'quizes' : quizList})
 
-
 class GetQuiz(APIView):
     def get(self, request, id):
         if id:
             quiz = Quiz.objects.filter(pk=id).first()
             if quiz:
                 quiz_data = QuizSerializer(quiz)
-                return Response(quiz_data.data)
+                if not request.query_params.get('room'):
+                    room_code = random.randint(100000, 999999)
+                    context = {'quiz_data' : quiz_data.data, 'room_code' : room_code, 'role' : 'Therapist'}
+                    return render(request, 'quiz.html', context=context)
+                else:
+                    room_code = request.query_params.get('room')
+                    context = {'quiz_data' : quiz_data.data, 'room_code' : room_code, 'role' : 'Client'}
+                    return render(request, 'quiz.html', context=context)
+
             else:
                 return Response("Please enter valid quiz ID......")
-        else:
-            quizList = Quiz.objects.all().values("title", "id")         
-            return Response({"quizList":quizList}, status=200)
+        else:       
+            return Response("Please enter valid quiz ID......")
 
 class PerformanceView(APIView):
     def post(self, request):
