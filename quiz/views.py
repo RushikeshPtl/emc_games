@@ -61,29 +61,22 @@ class GetQuizList(APIView):
 class GetQuiz(APIView):
     def get(self, request, id):
         if id:
-            quiz = Quiz.objects.filter(pk=id).first()
             room_codes = QuizRoom.objects.all().values("room_code")
-            if quiz:
-                quiz_data = QuizSerializer(quiz)
-                if not request.query_params.get('room'):
-                    room_code = random.randint(100000, 999999)
-                    room = QuizRoom.objects.filter(event_id = request.query_params.get('event_id'), quiz_id = id).first()
-                    if room:
-                        room_code = room.room_code
-                    else:
-                        room_code = random.randint(100000, 999999)
-                        while room_code in room_codes:
-                            room_code = random.randint(100000, 999999)
-                        room = QuizRoom.objects.create(room_code = room_code, quiz_id = quiz.id, event_id = request.query_params.get('event_id'))
-                    context = {'quiz_data' : quiz_data.data, 'room_code' : room_code, 'role' : 'Therapist'}
-                    return render(request, 'quiz.html', context=context)
+            if not request.query_params.get('room'):
+                room = QuizRoom.objects.filter(event_id = request.query_params.get('event_id'), quiz_id = id).first()
+                if room:
+                    room_code = room.room_code
                 else:
-                    room_code = request.query_params.get('room')   
-                    context = {'quiz_data' : quiz_data.data, 'room_code' : room_code, 'role' : 'Client'}
-                    return render(request, 'quiz.html', context=context)
-
+                    room_code = random.randint(100000, 999999)
+                    while room_code in room_codes:
+                        room_code = random.randint(100000, 999999)
+                room = QuizRoom.objects.create(room_code = room_code, quiz_id = id, event_id = request.query_params.get('event_id'))
+                context = {'room_code' : room_code, 'role' : 'Therapist'}
+                return render(request, 'quiz.html', context=context)
             else:
-                return Response("Please enter valid quiz ID......")
+                room_code = request.query_params.get('room')
+                context = {'room_code' : room_code, 'role' : 'Client'}
+                return render(request, 'quiz.html', context=context)
         else:       
             return Response("Please enter valid quiz ID......")
 
