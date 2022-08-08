@@ -73,11 +73,11 @@ class GetRoom(APIView):
                         while room_code in room_codes:
                             room_code = random.randint(100000, 999999)
                     room = QuizRoom.objects.create(room_code = room_code, quiz_id = id, event_id = request.query_params.get('event_id'))
-                    context = {'room_code' : room_code, 'role' : 'Therapist', 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
+                    context = {'room_code' : room_code, 'role' : 'Therapist', 'quiz_id' : quiz.id, 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
                     return render(request, 'quiz.html', context=context)
                 else:
                     room_code = request.query_params.get('room')
-                    context = {'room_code' : room_code, 'role' : 'Client', 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
+                    context = {'room_code' : room_code, 'role' : 'Client', 'quiz_id' : quiz.id, 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
                     return render(request, 'quiz.html', context=context)
             else:
                 return Response("Quiz Not Found......")
