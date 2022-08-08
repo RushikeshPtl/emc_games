@@ -5,7 +5,12 @@ env
 __pycache__
 db.sqlite3
 media
-migrations
+**/migrations/*
+**/migrations/**
+!**/migrations
+
+.migrations
+**/migrations
 
 .env 
 .venv 
@@ -15,6 +20,9 @@ ENV/
 env.bak/ 
 venv.bak/ 
 .env
-.env
-.env
 
+
+
+**/migrations
+**/__pycache__
+**/media
