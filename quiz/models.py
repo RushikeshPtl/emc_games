@@ -58,7 +58,7 @@ class Performance(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.ForeignKey(Answer, null=True, on_delete=models.CASCADE)
-    quizroom = models.ForeignKey('QuizRoom', on_delete=models.CASCADE)
+    quizroom = models.ForeignKey('QuizRoom', on_delete=models.CASCADE,null=True)
     is_correct = models.BooleanField()
 
     class Meta:
@@ -70,7 +70,7 @@ class Performance(models.Model):
 
 class QuizRoom(models.Model):
     room_code = models.IntegerField(unique=True)
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE,null=True)
     event_id = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now=True)
 
