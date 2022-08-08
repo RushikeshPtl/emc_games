@@ -1,2 +1,94 @@
-<h1>{{ role }}</h1>
-<h3>http://localhost:8000/get_quiz/{{ quiz_data.id}}?room={{ room_code }}</h3>
+<!-- <h1>{{ role }}</h1>
+<h3>http://localhost:8000/get_quiz/{{ quiz_data.id}}?room={{ room_code }}</h3> -->
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'quiz/css/style.css' %}">
+    <title>HelloHERO</title>
+</head>
+
+<body class="bg-dark">
+    {% if role == 'Therapist' %}
+    <div class="row col-sm-12 mt-2 pt-3">
+        <div class="col-sm-3">
+            <button type="button" class="mdc-button mdc-button--raised  share-play-quiz-btn" id="{{quiz_data.id}}">
+                <div class="mdc-button__ripple"></div>
+                <div class="spinner-border d-none" role="status"></div>
+                <span class="mdc-button__label">Share Quiz</span>
+            </button>
+        </div>
+
+    </div>
+    {% endif %}
+    <div class="row col-sm-12 mt-2 pt-3">
+        <div class="col-sm-5 mx-auto timer d-none text-white text-center">
+        </div>
+    </div>
+    <div class="text-center">
+        <div class="mdc-typography--headline5 text-white quiz-title"></div>
+        <span class="mdc-typography--subtitle1 text-white quiz-helper"></span>
+        {% if role == 'Therapist' %}
+        <button type="button" class="mdc-button mdc-button--raised  start-quiz-btn d-none">
+            <div class="mdc-button__ripple"></div>
+            <div class="spinner-border d-none" role="status"></div>
+            <span class="mdc-button__label">Start</span>
+        </button>
+        {% endif %}
+
+    </div>
+    <div class="row col-sm-12 mt-2 pt-1 d-flex flex-column">
+        <div class="mx-auto col-sm-9 play-quiz-content d-none"></div>
+        <div class="text-center mt-2">
+            <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised d-none" id="save-quiz-btn">
+                <div class="mdc-button__ripple"></div>
+                <div class="spinner-border d-none" role="status">
+                </div>
+                <span class="mdc-button__label">Save</span>
+            </button>
+        </div>
+
+    </div>
+    <aside class="mdc-snackbar quiz-link-cpy-snackbar" aria-label="copyclipboard">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+            <div class="mdc-snackbar__label" aria-atomic="false">
+                Link copied to clipboard
+            </div>
+
+        </div>
+    </aside>
+    <aside class="mdc-snackbar quiz-join-snackbar" aria-label="roomjoined">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+            <div class="mdc-snackbar__label" aria-atomic="false">
+
+            </div>
+
+        </div>
+    </aside>
+    {% include 'partials/preview_quiz_modal.html' %}
+    {% include 'partials/performance_show_modal.html' %}
+    <script type="text/javascript" src="{% static 'quiz/js/jquery-3.6.0.min.js' %}"></script>
+    <script type="text/javascript" src="https://momentjs.com/downloads/moment.js"></script>
+    <script type="text/javascript">
+        var quiz_id = '{{ quiz_data.id }}';
+        var room_code = '{{ room_code }}';
+        var role = '{{ role }}';
+        var title = '{{quiz_data.title}}'
+        // var category = '{{quiz_data.}}'
+    </script>
+    <script type="text/javascript" src="{% static 'quiz/js/play_quiz.js' %}"></script>
+</body>
+
+</html>

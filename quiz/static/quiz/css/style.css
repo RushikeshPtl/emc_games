@@ -10,6 +10,10 @@
   font-weight: bold;
 }
 
+.blur {
+  filter: blur(3.5px);
+}
+
 #add-question .spinner-border {
   color: #fff !important;
 }
@@ -61,7 +65,9 @@
   overflow-y: auto;
 }
 
-.quiz-err-snackbar {
+.quiz-err-snackbar,
+.quiz-link-cpy-snackbar,
+.quiz-join-snackbar {
   position: absolute;
   top: 0;
   right: 0;
@@ -71,6 +77,16 @@
 
 .quiz-err-snackbar .mdc-snackbar__surface {
   background-color: rgb(251, 26, 26);
+}
+
+.quiz-link-cpy-snackbar .mdc-snackbar__surface,
+.quiz-join-snackbar .mdc-snackbar__surface {
+  background-color: #fff;
+}
+
+.quiz-link-cpy-snackbar .mdc-snackbar__label,
+.quiz-join-snackbar .mdc-snackbar__label {
+  color: #000;
 }
 
 input[name='therapist_id']::-webkit-inner-spin-button,
@@ -91,4 +107,16 @@ input[name='therapist_id']::-webkit-outer-spin-button {
 
 .quiz-list-container::-webkit-scrollbar {
   display: none;
+}
+
+.play-quiz-content {
+  background-color: #fff;
+  border-radius: 10px;
+  height: auto;
+  max-height: 550px;
+  overflow-y: auto;
+}
+
+.quiz-helper {
+  font-size: 12px;
 }

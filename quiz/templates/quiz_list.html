@@ -30,12 +30,22 @@
                 {% for quiz in quizes %}
                 <div class="mdc-card mdc-card-outline mb-1 quiz-card" id="{{quiz.id}}">
                     <div class="mdc-card__primary-action p-2" tabindex="0">
-                        <span class="demo-card__title mdc-typography mdc-typography--headline6">{{quiz.title}}</span>
-                        <div class="d-flex"><span>Category: </span><span
-                                class="demo-card__subtitle mdc-typography mdc-typography--subtitle1 pl-2">
-                                {{quiz.category}}</span>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <span
+                                    class="demo-card__title mdc-typography mdc-typography--headline6">{{quiz.title}}</span>
+                                <div class="d-flex"><span>Category: </span><span
+                                        class="demo-card__subtitle mdc-typography mdc-typography--subtitle1 pl-2">
+                                        {{quiz.category}}</span>
+                                </div>
+                            </div>
+                            <button type="button" class="mdc-button mdc-button--raised join-room join-room-btn"
+                                id="{{quiz.id}}">
+                                <div class="mdc-button__ripple"></div>
+                                <div class="spinner-border d-none" role="status"></div>
+                                <span class="mdc-button__label">Join Room</span>
+                            </button>
                         </div>
-
                         <div class="mdc-card__ripple"></div>
                     </div>
                 </div>
