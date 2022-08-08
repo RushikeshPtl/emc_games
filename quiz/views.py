@@ -22,11 +22,9 @@ class QuizView(APIView):
             category = request.data.get('category'),
             therapist_id = request.data.get('therapist_id')
         )
-        if quiz.save():
-            quiz_data = QuizSerializer(quiz)
-            return Response(quiz_data.data)
-        else:
-            return Response("Error while savin g the quiz..........")
+
+        quiz_data = QuizSerializer(quiz)
+        return Response(quiz_data.data)
 
 
 class QuestionView(APIView):
@@ -37,6 +35,7 @@ class QuestionView(APIView):
                 difficulty = request.data.get('difficulty'),
                 quiz_id = request.data.get('quiz_id')
             )
+            pdb.set_trace()
             question.save()
             answers = request.data.get('answers')
             
