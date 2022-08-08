@@ -1,12 +1,12 @@
 const API_URL = new URL(window.location).origin
-let checked = []
-var radioBtns = []
-var snackbars = []
-var socket = ''
-var dialog
-var event_id = ''
-var quizQuestions = []
-let intervalId
+// let checked = []
+// var radioBtns = []
+// var snackbars = []
+// var socket = ''
+// var dialog
+// var event_id = ''
+// var quizQuestions = []
+// let intervalId
 
 const attachMDCEffect = () => {
   const radioboxes =
@@ -248,27 +248,34 @@ const saveQuizData = () => {
     .then((resp) => resp.json())
     .then((response) => {
       console.log(response)
-      $('.performance-show-modal .score-txt').text(`Score- ${response.percent}`)
-
-      let txt = ''
-      if (response.percent === 100) {
-        role === 'Client' &&
-          $('.performance-show-modal .success-txt').text('Hurray!! You won!')
-        $('.performance-show-modal img.success').removeClass('d-none')
-        $('.performance-show-modal img.failed').addClass('d-none')
-      } else if (response.percent < 90) {
-        role === 'Client' &&
-          $('.performance-show-modal .success-txt').text(
-            'Not Bad!! keep trying!'
-          )
-        $('.performance-show-modal img.success').addClass('d-none')
-        $('.performance-show-modal img.failed').removeClass('d-none')
+      let data = {
+        type: 'show-score',
+        percent: response.percent,
       }
-      dialog.open()
+      socket.send(JSON.stringify({ data }))
+      showScoreModal(response.percent)
     })
     .catch((err) => {
       console.log(err)
     })
+}
+
+const showScoreModal = (data) => {
+  role === 'Therapist' && clearInterval(intervalId)
+  $('.performance-show-modal .score-txt').text(`Score- ${data}`)
+
+  if (data === 100) {
+    role === 'Client' &&
+      $('.performance-show-modal .success-txt').text('Hurray!! You won!')
+    $('.performance-show-modal img.success').removeClass('d-none')
+    $('.performance-show-modal img.failed').addClass('d-none')
+  } else if (data < 90) {
+    role === 'Client' &&
+      $('.performance-show-modal .success-txt').text('Not Bad!! keep trying!')
+    $('.performance-show-modal img.success').addClass('d-none')
+    $('.performance-show-modal img.failed').removeClass('d-none')
+  }
+  dialog.open()
 }
 
 $('#save-quiz-btn')
@@ -311,6 +318,9 @@ const startWebsocketConnection = () => {
         break
       case 'chosen-ans':
         role === 'Therapist' && updateTherapistUI(payload)
+        break
+      case 'show-score':
+        role === 'Therapist' && showScoreModal(payload.percent)
         break
       case 'end-quiz':
         endQuiz()
@@ -357,7 +367,7 @@ $('.share-play-quiz-btn')
   .off()
   .click((evt) => {
     evt.preventDefault()
-    const link = `${API_URL}/get_quiz/${quiz_id}?event_id=${event_id}&room=${room_code}`
+    const link = `${API_URL}/get_room/${quiz_id}?event_id=${event_id}&room=${room_code}`
     if (navigator.clipboard) {
       navigator.clipboard.writeText(link).then(
         (val) => {

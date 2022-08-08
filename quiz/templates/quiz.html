@@ -81,13 +81,15 @@
     {% include 'partials/performance_show_modal.html' %}
     <script type="text/javascript" src="{% static 'quiz/js/jquery-3.6.0.min.js' %}"></script>
     <script type="text/javascript" src="https://momentjs.com/downloads/moment.js"></script>
+    <script type="text/javascript" src="{% static 'quiz/js/play_quiz_global.js' %}"></script>
     <script type="text/javascript">
-        var quiz_id = '{{ quiz_data.id }}';
+        var quiz_id = '{{ quiz_id }}';
         var room_code = '{{ room_code }}';
         var role = '{{ role }}';
-        var title = '{{quiz_data.title}}'
+        var title = '{{ quiz_title }}';
         // var category = '{{quiz_data.}}'
     </script>
+
     <script type="text/javascript" src="{% static 'quiz/js/play_quiz.js' %}"></script>
 </body>
 
