@@ -1,3 +1,4 @@
+from pyexpat import model
 from random import choices
 from django.db import models
 
@@ -57,6 +58,7 @@ class Performance(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.ForeignKey(Answer, null=True, on_delete=models.CASCADE)
+    quizroom = models.ForeignKey('QuizRoom', on_delete=models.CASCADE)
     is_correct = models.BooleanField()
 
     class Meta:
@@ -64,4 +66,19 @@ class Performance(models.Model):
 
     def __str__(self):
         return str(self.user_id)
+
+
+class QuizRoom(models.Model):
+    room_code = models.IntegerField(unique=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    event_id = models.IntegerField(null=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'QuizRoom'
+    
+    def __str__(self):
+        return str(self.room_code)
+    
+
 

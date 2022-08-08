@@ -1,3 +1,4 @@
+from ast import While
 import json
 from urllib import response
 from django.shortcuts import render
@@ -21,9 +22,11 @@ class QuizView(APIView):
             category = request.data.get('category'),
             therapist_id = request.data.get('therapist_id')
         )
-        quiz.save()
-        quiz_data = QuizSerializer(quiz)
-        return Response(quiz_data.data)
+        if quiz.save():
+            quiz_data = QuizSerializer(quiz)
+            return Response(quiz_data.data)
+        else:
+            return Response("Error while savin g the quiz..........")
 
 
 class QuestionView(APIView):
@@ -59,14 +62,23 @@ class GetQuiz(APIView):
     def get(self, request, id):
         if id:
             quiz = Quiz.objects.filter(pk=id).first()
+            room_codes = QuizRoom.objects.all().values("room_code")
             if quiz:
                 quiz_data = QuizSerializer(quiz)
                 if not request.query_params.get('room'):
                     room_code = random.randint(100000, 999999)
+                    room = QuizRoom.objects.filter(event_id = request.query_params.get('event_id'), quiz_id = id).first()
+                    if room:
+                        room_code = room.room_code
+                    else:
+                        room_code = random.randint(100000, 999999)
+                        while room_code in room_codes:
+                            room_code = random.randint(100000, 999999)
+                        room = QuizRoom.objects.create(room_code = room_code, quiz_id = quiz.id, event_id = request.query_params.get('event_id'))
                     context = {'quiz_data' : quiz_data.data, 'room_code' : room_code, 'role' : 'Therapist'}
                     return render(request, 'quiz.html', context=context)
                 else:
-                    room_code = request.query_params.get('room')
+                    room_code = request.query_params.get('room')   
                     context = {'quiz_data' : quiz_data.data, 'room_code' : room_code, 'role' : 'Client'}
                     return render(request, 'quiz.html', context=context)
 
@@ -74,6 +86,15 @@ class GetQuiz(APIView):
                 return Response("Please enter valid quiz ID......")
         else:       
             return Response("Please enter valid quiz ID......")
+
+class GetQuestions(APIView):
+    def get(self, request, quiz_id):
+        if quiz_id:
+            questions = Question.objects.filter(quiz_id = quiz_id)
+            all_questions = QuestionSerializer(questions, many = True)
+            return Response({'questions' : all_questions.data})
+        else:
+            return Response("Please provide valis quiz ID...")
 
 class PerformanceView(APIView):
     def post(self, request):
@@ -98,11 +119,14 @@ class PerformanceView(APIView):
         return Response(context)
     
     def get(self, request, quiz_id):
-        user_id = request.data.get("User ID")
-        event_id = request.data.get("Event ID")
-        performance = Performance.objects.filter(quiz_id = quiz_id, user_id = user_id, event_id = event_id)
-        total_questions = performance.count()
-        correct_questions = performance.filter(is_correct = True).count()
-        performance_data = PerformanceSerializer(performance, many = True)
-        context = {"performance" : performance_data.data, "total_questions" : total_questions, "correct_questions" : correct_questions}
-        return Response(context)
+        if quiz_id:
+            user_id = request.data.get("User ID")
+            event_id = request.data.get("Event ID")
+            performance = Performance.objects.filter(quiz_id = quiz_id, user_id = user_id, event_id = event_id)
+            total_questions = performance.count()
+            correct_questions = performance.filter(is_correct = True).count()
+            performance_data = PerformanceSerializer(performance, many = True)
+            context = {"performance" : performance_data.data, "total_questions" : total_questions, "correct_questions" : correct_questions}
+            return Response(context)
+        else:
+            return Response("Please provide valid quiz id......")
