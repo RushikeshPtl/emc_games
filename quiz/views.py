@@ -22,7 +22,7 @@ class QuizView(APIView):
             category = request.data.get('category'),
             therapist_id = request.data.get('therapist_id')
         )
-
+        quiz.save()
         quiz_data = QuizSerializer(quiz)
         return Response(quiz_data.data)
 
@@ -35,10 +35,8 @@ class QuestionView(APIView):
                 difficulty = request.data.get('difficulty'),
                 quiz_id = request.data.get('quiz_id')
             )
-            pdb.set_trace()
             question.save()
             answers = request.data.get('answers')
-            
             for ans in answers:
                 answer = Answer(
                     answer = ans.get('answer'),
