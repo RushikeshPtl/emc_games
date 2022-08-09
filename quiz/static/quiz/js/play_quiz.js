@@ -289,8 +289,10 @@ const startWebsocketConnection = () => {
   console.log(room_code)
   console.log(role)
   socket = new WebSocket(`ws://127.0.0.1:8000/ws/game/${room_code}`)
+  console.log(socket)
   socket.onopen = (e) => {
     if (role === 'Client') {
+      console.log('Client Joined---------')
       let data = {
         type: 'room-joined',
         role: 'Client',
@@ -354,10 +356,8 @@ $(document).ready(() => {
   let params = new URLSearchParams(url.search)
   console.log(params.has('room'))
   //---- check if URL has room code , if it's then Student has logged-in----//
-  if (params.has('room')) {
-    startWebsocketConnection()
-    console.log(socket)
-  }
+  startWebsocketConnection()
+  console.log(socket)
   event_id = params.get('event_id')
   attachMDCEffect()
   $('.link-to-copy').val(
