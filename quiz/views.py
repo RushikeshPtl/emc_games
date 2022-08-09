@@ -69,7 +69,7 @@ class GetRoom(APIView):
                         room_code = random.randint(100000, 999999)
                         while room_code in room_codes:
                             room_code = random.randint(100000, 999999)
-                    room = QuizRoom.objects.create(room_code = room_code, quiz_id = id, event_id = request.query_params.get('event_id'))
+                        room = QuizRoom.objects.create(room_code = room_code, quiz_id = id, event_id = request.query_params.get('event_id'))
                     context = {'room_code' : room_code, 'role' : 'Therapist', 'quiz_id' : quiz.id, 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
                     return render(request, 'quiz.html', context=context)
                 else:
