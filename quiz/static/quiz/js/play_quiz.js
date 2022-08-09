@@ -4,7 +4,6 @@ const API_URL = new URL(window.location).origin
 // var snackbars = []
 // var socket = ''
 // var dialog
-// var event_id = ''
 // var quizQuestions = []
 // let intervalId
 
@@ -361,6 +360,11 @@ $(document).ready(() => {
   }
   event_id = params.get('event_id')
   attachMDCEffect()
+  $('.link-to-copy').val(
+    `${API_URL}/get_room/${quiz_id}?event_id=${params.get(
+      'event_id'
+    )}&room=${room_code}`
+  )
 })
 
 $('.share-play-quiz-btn')
@@ -382,5 +386,14 @@ $('.share-play-quiz-btn')
           console.error(err)
         }
       )
+    } else {
+      const snackbar = snackbars.find((ele) =>
+        $(ele.root).hasClass('quiz-link-cpy-snackbar')
+      )
+      snackbar.labelText =
+        "Can't copy to clipboard.Please manually copy the link."
+      snackbar.timeoutMs = 4000
+      snackbar.open()
+      startWebsocketConnection()
     }
   })

@@ -23,7 +23,10 @@
 <body class="bg-dark">
     {% if role == 'Therapist' %}
     <div class="row col-sm-12 mt-2 pt-3">
-        <div class="col-sm-3">
+        <div class="col-sm-5 pr-0">
+            <input type="text" class="link-to-copy w-100 h-100 bg-white" disabled />
+        </div>
+        <div class="col-sm-3 pl-0">
             <button type="button" class="mdc-button mdc-button--raised  share-play-quiz-btn" id="{{quiz_data.id}}">
                 <div class="mdc-button__ripple"></div>
                 <div class="spinner-border d-none" role="status"></div>
