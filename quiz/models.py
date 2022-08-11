@@ -8,6 +8,7 @@ class Quiz(models.Model):
     title = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
     therapist_id = models.IntegerField()
+    duration = models.IntegerField(default=10)
     # no_of_questions = models.IntegerField()
     class Meta:
         db_table = 'Quizes'
@@ -59,7 +60,6 @@ class Performance(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.ForeignKey(Answer, null=True, on_delete=models.CASCADE)
     quizroom = models.ForeignKey('QuizRoom', null=True, on_delete=models.CASCADE)
-    quizroom = models.ForeignKey('QuizRoom', on_delete=models.CASCADE,null=True)
     is_correct = models.BooleanField()
 
     class Meta:
