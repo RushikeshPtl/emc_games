@@ -233,6 +233,7 @@ const saveQuizData = () => {
     event_id: parseInt(event_id),
     user_id: parseInt((Math.random() * 10).toFixed(0)),
     answers: answers,
+    room_code: room_code,
   }
   console.log(data)
   console.log(document.cookie)
