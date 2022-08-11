@@ -1,3 +1,4 @@
+from dataclasses import fields
 from typing_extensions import Required
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
@@ -20,7 +21,7 @@ class QuizSerializer(ModelSerializer):
 
     class Meta:
         model = Quiz
-        fields = ('id', 'title', 'therapist_id', 'questions')
+        fields = ('id', 'title', 'therapist_id', 'duration', 'questions')
 
 class PerformanceSerializer(ModelSerializer):
     quiz_title = serializers.SerializerMethodField('get_quiz_title')
@@ -40,3 +41,21 @@ class PerformanceSerializer(ModelSerializer):
     def get_answer(self, obj):
         if obj.answer:
             return obj.answer.answer
+
+class ResultSerializer(ModelSerializer):
+    quiz_title = serializers.SerializerMethodField('get_quiz_title')
+    quiz_category = serializers.SerializerMethodField('get_quiz_category')
+    total_questions = serializers.SerializerMethodField('get_total_questions')
+
+    class Meta:
+        model = Result
+        fields = ('id', 'room_id', 'quiz_title', 'quiz_category', 'user_id', 'total_questions', 'correct_answers', 'wrong_answers', 'time_taken', 'time_over')
+    
+    def get_quiz_title(self, obj):
+        return obj.quiz.title
+
+    def get_quiz_category(self, obj):
+        return obj.quiz.category
+    
+    def get_total_questions(self, obj):
+        return obj.correct_answers + obj.wrong_answers

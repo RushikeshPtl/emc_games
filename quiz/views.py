@@ -23,6 +23,8 @@ class QuizView(APIView):
             therapist_id = request.data.get('therapist_id')
         )
         quiz.save()
+        if request.data.get('duration'):
+            quiz.duration = request.data.get('duration')
         quiz_data = QuizSerializer(quiz)
         return Response(quiz_data.data)
 
@@ -96,6 +98,7 @@ class PerformanceView(APIView):
         event_id = request.data.get('event_id')
         quiz_id = request.data.get('quiz_id')
         answers = request.data.get('answers')
+        room_code = request.data.get('room_code')
         for answer in answers:
             question_id = answer.get('question_id')
             answer_id = answer.get('answer_id')
@@ -106,10 +109,21 @@ class PerformanceView(APIView):
                 Performance.objects.create(user_id = user_id, event_id = event_id, quiz_id = quiz_id, question_id = question_id, is_correct = False)
         performance = Performance.objects.filter(quiz_id = quiz_id, user_id = user_id, event_id = event_id)
         total_questions = performance.count()
-        correct_questions = performance.filter(is_correct = True).count()
+        correct_answers = performance.filter(is_correct = True).count()
         performance_data = PerformanceSerializer(performance, many = True)
-        percent = (correct_questions/total_questions) * 100
-        context = {"performance" : performance_data.data, "total_questions" : total_questions, "correct_questions" : correct_questions, "percent" : percent}
+        percent = (correct_answers/total_questions) * 100
+        room_id = QuizRoom.objects.get(room_code=room_code).id
+        result = Result(
+            room_id = room_id,
+            user_id = user_id,
+            quiz_id = quiz_id,
+            correct_answers = correct_answers,
+            wrong_answers = total_questions - correct_answers,
+            percent = percent
+        )
+        result.save()
+        result_data = ResultSerializer(result)
+        context = {"performance" : performance_data.data, "total_questions" : total_questions, "correct_questions" : correct_answers, "percent" : percent, "result" : result_data.data}
         return Response(context)
     
     def get(self, request, quiz_id):

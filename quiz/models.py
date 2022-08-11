@@ -81,5 +81,19 @@ class QuizRoom(models.Model):
     def __str__(self):
         return str(self.room_code)
     
+class Result(models.Model):
+    room = models.ForeignKey(QuizRoom, on_delete=models.CASCADE)
+    user_id = models.IntegerField()
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    correct_answers = models.IntegerField()
+    wrong_answers = models.IntegerField()
+    percent = models.IntegerField()
+    time_taken = models.IntegerField(null=True)
+    time_over = models.BooleanField(default=False)
+
+
+    class Meta:
+        db_table = 'Result'
+    
 
 
