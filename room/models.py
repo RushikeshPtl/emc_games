@@ -17,7 +17,7 @@ class Room(models.Model):
     therapist_id = models.IntegerField()
     client_id = models.IntegerField(null=True)
     is_over = models.BooleanField('is_over', default=False)
-    game = models.ForeignKey(Game, on_delete=models.PROTECT)
+    game = models.ForeignKey(Game, on_delete=models.PROTECT, null=True)
 
     class Meta:
         db_table = 'Room'

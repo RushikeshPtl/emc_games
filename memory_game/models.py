@@ -1,5 +1,5 @@
 from django.db import models
-
+from room.models import Room
 # Create your models here.
 
 
@@ -34,7 +34,7 @@ class MemoryPerformance(models.Model):
 
 
 class MemoryRoom(models.Model):
-    room_code = models.IntegerField(unique=True)    
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)    
     memorynum = models.ForeignKey(MemoryNum, on_delete=models.CASCADE,null=True)
     event_id = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now=True)

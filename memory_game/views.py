@@ -13,6 +13,7 @@ import pdb
 from .serializers import *
 import random
 from random import randint
+from room.models import Room
 
 # Create your views here.
 class MemoryNumView(APIView):
@@ -44,9 +45,14 @@ class MemoryNumView(APIView):
             speed=1000
         else:
             speed=500
-
-        context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed}
-        return render(request, 'memorynum.html',context=context)
+        room_codes = Room.objects.all().values('room_code')
+        room_code = random.randint(100000, 999999)
+        while room_code in room_codes:
+            room_code = random.randint(100000, 999999)
+        room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client_id)
+        memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = number)
+        context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
+        return render(request, 'memorynum.html', context=context)
 
 def random_with_N_digits(n):
     range_start = 10**(n-1)
