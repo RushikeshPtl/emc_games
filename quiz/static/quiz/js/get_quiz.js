@@ -48,7 +48,7 @@ $('.join-room-btn')
 
     const id = parseInt(evt.currentTarget.id)
     const a = document.createElement('a')
-    a.href = `${API_URL}/get_room/${id}?event_id=${parseInt(
+    a.href = `${API_URL}/quiz/get_room/${id}?event_id=${parseInt(
       (Math.random() * 10).toFixed(0)
     )}`
     a.click()

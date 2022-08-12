@@ -24,7 +24,7 @@ const attachMDCEffect = () => {
 
 const getQuizData = async () => {
   try {
-    return fetch(`${API_URL}/get_questions/${quiz_id}`, {
+    return fetch(`${API_URL}/quiz/get_questions/${quiz_id}`, {
       method: 'GET',
     })
       .then((resp) => resp.json())
@@ -237,7 +237,7 @@ const saveQuizData = () => {
   }
   console.log(data)
   console.log(document.cookie)
-  fetch(`${API_URL}/performance/`, {
+  fetch(`${API_URL}/quiz/performance/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -362,7 +362,7 @@ $(document).ready(() => {
   event_id = params.get('event_id')
   attachMDCEffect()
   $('.link-to-copy').val(
-    `${API_URL}/get_room/${quiz_id}?event_id=${params.get(
+    `${API_URL}/quiz/get_room/${quiz_id}?event_id=${params.get(
       'event_id'
     )}&room=${room_code}`
   )
@@ -372,7 +372,7 @@ $('.share-play-quiz-btn')
   .off()
   .click((evt) => {
     evt.preventDefault()
-    const link = `${API_URL}/get_room/${quiz_id}?event_id=${event_id}&room=${room_code}`
+    const link = `${API_URL}/quiz/get_room/${quiz_id}?event_id=${event_id}&room=${room_code}`
     if (navigator.clipboard) {
       navigator.clipboard.writeText(link).then(
         (val) => {
