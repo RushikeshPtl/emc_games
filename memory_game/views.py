@@ -50,7 +50,7 @@ class MemoryNumView(APIView):
         while room_code in room_codes:
             room_code = random.randint(100000, 999999)
         room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client_id)
-        memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = number)
+        memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = memoryGame)
         context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
         return render(request, 'memorynum.html', context=context)
 
