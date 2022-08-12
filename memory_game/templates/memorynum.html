@@ -1,0 +1,104 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'quiz/css/style.css' %}">
+    <title>HelloHERO</title>
+</head>
+
+<body class="bg-dark" style="color:#ffffff">
+    <div class="mdc-typography center">
+        <span class="mdc-typography--headline5 text-white text-center">HelloHERO Memory Game</span>
+    </div>
+    <div class="row col-md-12 mt-3 pt-3">
+        
+        <div class="col-md-4">
+            <h5 class="text-white pl-1">Number</h5>
+            <div class="container">
+                {{number}}
+                
+            </div>
+            <input type="button" id="myBtn" onclick="show()" value="Start">
+            
+        </div>
+        
+        <div class="col-md-8 play-quiz">
+            {% include 'partials/preview_quiz_modal.html' %}
+            {% include 'partials/performance_show_modal.html' %}
+            <div class="mt-2 text-center">
+                <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised d-none"
+                    id="save-play-quiz-btn">
+                    <div class="mdc-button__ripple"></div>
+                    <div class="spinner-border d-none" role="status">
+                    </div>
+                    <span class="mdc-button__label">Save</span>
+                </button>
+            </div>
+
+            <!-- <img src="{% static 'quiz/images/failed.png' %}" width="250px" height="auto"/>             -->
+        </div>
+        
+
+    </div>
+    <script type="text/javascript" src="{% static 'quiz/js/jquery-3.6.0.min.js' %}"></script>
+    
+    <script>      
+
+
+    var num = {{number}};
+    var digits = num.toString().split('');
+    var digit = num.toString();
+       
+    var realDigits = digits.map(Number) 
+    var visible = 0;
+   
+    function show(){
+    const id= setInterval(displayVal,{{speed}}) 
+   
+    
+    function displayVal(){
+
+    if (visible == realDigits.length) {
+      clearInterval(id);
+    } else {
+   
+    
+    var fullWidth = window.innerWidth;
+    var fullHeight = window.innerHeight;
+        
+    var elem = document.createElement("div");   
+    
+    elem.setAttribute("id", "mydiv");   
+    elem.textContent = realDigits[visible];      
+    $(elem).fadeOut({{speed}});
+    elem.style.position = "absolute";
+    elem.style.fontSize= 50+"px";
+    elem.style.left = Math.round(Math.random() * (1024 - 512) + 512) + "px";
+    elem.style.top = Math.round(Math.random() * (720 - 360) + 360) + "px";
+    elem.style.margin="auto";
+    elem.style.padding=10+"px";
+    document.body.appendChild(elem);       
+       
+    visible++;
+    }
+    }    
+    }   
+
+
+
+    </script>
+</body>
+
+</html>

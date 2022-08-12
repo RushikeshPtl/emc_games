@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'room',
     'rest_framework',
     'channels',
-    'quiz'
+    'quiz',
+    'memory_game',
 ]
 
 MIDDLEWARE = [

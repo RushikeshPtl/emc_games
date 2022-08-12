@@ -26,7 +26,7 @@
         <h3 class="text-center text-white">Start Game</h3>
         <div class="mdc-typography center">
             <span class="mdc-typography--headline5 text-white text-center">HelloHERO Quiz</span>
-            <p class="mdc-typography--subtitle1 text-white mb-0">Let's create your first quiz</p>
+            <p class="mdc-typography--subtitle1 text-white mb-0">Let's create your first memory game</p>
             <a class="mdc-typography--subtitle2 text-white" href="/get_quiz_list">go to quiz list</a>
         </div>
         <div class="row col-md-12">
@@ -38,25 +38,47 @@
                 </div>
                 {% endfor %}
                 {% endif %}
-                <form method="POST" action="/quiz/create_quiz/">
+                <form method="POST" action="/memory-game/create-memory-game/">
                     {% csrf_token %}
                     <div class="col-md-12">
                         <div class="col-md-5 form-group">
-                            <label class="text-white">Enter Quiz Title</label>
-                            <input type="text" name="title" class="form-control">
+                            <label class="text-white">Speed : </label>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="easy">
+                              <label class="form-check-label text-white" for="inlineRadio1">Easy</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="medium">
+                              <label class="form-check-label text-white" for="inlineRadio2">Medium</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="hard">
+                              <label class="form-check-label text-white" for="inlineRadio3">Hard</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="extreme">
+                              <label class="form-check-label text-white" for="inlineRadio4">Extreme</label>
+                            </div>
                         </div>
 
                         <div class="col-md-5 form-group">
-                            <label class="text-white">Enter Category</label>
-                            <input type="text" name="category" class="form-control">
+                            <label class="text-white">Initial Size :</label>
+                            <input type="range" name="range" id="myRange" min="1" max="10" value="5">
+                            <p class="text-white">Size : <span id="demo"></span></p>                            
                         </div>
 
                         <div class="col-md-5 form-group">
                             <label class="text-white">Enter Therapist ID</label>
                             <input type="number" name="therapist_id" class="form-control">
                         </div>
+
+                        <div class="col-md-5 form-group">
+                            <label class="text-white">Enter Client ID</label>
+                            <input type="number" name="client_id" class="form-control">
+                        </div>
+                        
                         <div class="col-md-5">
-                            <button type="submit" class="btn btn-light" id="create-quiz-btn">Add Questions</button>
+                            <button type="submit" class="btn btn-light" >Start Game</button>
                         </div>
                     </div>
 
@@ -99,6 +121,15 @@
     {% load static %}
     <script type="text/javascript" src="{% static 'quiz/js/jquery-3.6.0.min.js' %}"></script>
     <script async type="text/javascript" src="{% static 'quiz/js/index.js' %}"></script>
+    <script>
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+</script>
 </body>
 
 </html>
