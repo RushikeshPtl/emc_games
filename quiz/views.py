@@ -10,6 +10,7 @@ from django.core import serializers as sr
 import pdb
 from .serializers import *
 import random
+from room.models import Room
 # Create your views here.
 
 class QuizView(APIView):
@@ -60,18 +61,21 @@ class GetQuizList(APIView):
 class GetRoom(APIView):
     def get(self, request, id):
         if id:
-            room_codes = QuizRoom.objects.all().values("room_code")
+            room_codes = Room.objects.all().values("room_code")
             quiz = Quiz.objects.get(pk=id)
+            therapist_id = random.randint(100000, 999999)
+            client_id = random.randint(100000, 999999)
             if quiz:
                 if not request.query_params.get('room'):
-                    room = QuizRoom.objects.filter(event_id = request.query_params.get('event_id'), quiz_id = id).first()
-                    if room:
-                        room_code = room.room_code
+                    quizroom = QuizRoom.objects.filter(event_id = request.query_params.get('event_id'), quiz_id = id).first()
+                    if quizroom:
+                        room_code = quizroom.room.room_code
                     else:
                         room_code = random.randint(100000, 999999)
                         while room_code in room_codes:
                             room_code = random.randint(100000, 999999)
-                        room = QuizRoom.objects.create(room_code = room_code, quiz_id = id, event_id = request.query_params.get('event_id'))
+                        rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client_id)
+                        room = QuizRoom.objects.create(room_id = rm.id, quiz_id = id, event_id = request.query_params.get('event_id'))
                     context = {'room_code' : room_code, 'role' : 'Therapist', 'quiz_id' : quiz.id, 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
                     return render(request, 'quiz.html', context=context)
                 else:

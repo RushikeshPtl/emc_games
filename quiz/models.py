@@ -1,6 +1,7 @@
 from pyexpat import model
 from random import choices
 from django.db import models
+from room.models import Room
 
 # Create your models here.
 
@@ -70,7 +71,7 @@ class Performance(models.Model):
 
 
 class QuizRoom(models.Model):
-    room_code = models.IntegerField(unique=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE,null=True)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE,null=True)
     event_id = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now=True)
@@ -79,7 +80,7 @@ class QuizRoom(models.Model):
         db_table = 'QuizRoom'
     
     def __str__(self):
-        return str(self.room_code)
+        return str(self.id)
     
 class Result(models.Model):
     room = models.ForeignKey(QuizRoom, on_delete=models.CASCADE)
