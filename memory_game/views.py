@@ -1,4 +1,5 @@
 from http import client
+from multiprocessing import context
 from django.shortcuts import render
 from ast import While
 import json
@@ -59,6 +60,19 @@ def random_with_N_digits(n):
     range_end = (10**n)-1
     return randint(range_start, range_end)
 
+class GetMemoryNum(APIView):
+    def get(self, request, room_code):
+        if room_code:
+            room = Room.objects.filter(room_code = room_code).first()
+            if room:
+                memory_room = MemoryRoom.objects.filter(room_id = room.id).first()
+                number = memory_room.memorynum.number
+                context = {"number" : number, "room_code" : room_code, "role" : "Client"}
+                return render(request, 'memorynum.html', context=context)
+            else:
+                return Response('Room not found.....................')
+        else:
+            return Response('Please provide valid room code.........')
 
 class MemoryPerformanceView(APIView):
     def post(self,request):
