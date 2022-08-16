@@ -5,7 +5,7 @@ from room.models import Room
 
 class MemoryNum(models.Model):    
     category = models.CharField(max_length=100)
-    number = models.IntegerField()
+    number = models.CharField(max_length=10)
     numberdigit = models.IntegerField()
     therapist_id = models.IntegerField()
     client_id = models.IntegerField(default="0")

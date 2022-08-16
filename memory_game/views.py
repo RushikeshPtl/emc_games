@@ -15,45 +15,50 @@ from .serializers import *
 import random
 from random import randint
 from room.models import Room
+from django.http import HttpResponse
 
 # Create your views here.
 class MemoryNumView(APIView):
     def get(self, request):
         return render(request, 'create_memorynum.html')
 
-    def post(self, request):        
-        drange=request.POST.get('range')
-        therapist_id = request.POST.get('therapist_id')
-        client_id = request.POST.get('client_id')
-        category = request.POST.get('inlineRadioOptions')
-        number=random_with_N_digits(int(drange))
-        memoryGame = MemoryNum(
-            category = category,
-            numberdigit = drange,
-            number = number,
-            therapist_id = therapist_id,
-            client_id = client_id
-        )
-        memoryGame.save()
-        MemoryNum_data = MemoryNumSerializer(memoryGame)
-        # return Response(MemoryNum_data.data)
-        speed=None
-        if category=="easy":
-            speed=2500
-        elif category=="medium":
-            speed=2000
-        elif category=="hard":
-            speed=1000
-        else:
-            speed=500
-        room_codes = Room.objects.all().values('room_code')
-        room_code = random.randint(100000, 999999)
-        while room_code in room_codes:
+    def post(self, request):  
+        try:      
+            drange=request.POST.get('range')
+            therapist_id = request.POST.get('therapist_id')
+            client_id = request.POST.get('client_id')
+            category = request.POST.get('inlineRadioOptions')
+            number=random_with_N_digits(int(drange))
+            memoryGame = MemoryNum(
+                category = category,
+                numberdigit = drange,
+                number = number,
+                therapist_id = therapist_id,
+                client_id = client_id
+            )
+            memoryGame.save()
+            MemoryNum_data = MemoryNumSerializer(memoryGame)
+            # return Response(MemoryNum_data.data)
+            speed=None
+            if category=="easy":
+                speed=2500
+            elif category=="medium":
+                speed=2000
+            elif category=="hard":
+                speed=1000
+            else:
+                speed=500
+            room_codes = Room.objects.all().values('room_code')
             room_code = random.randint(100000, 999999)
-        room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client_id)
-        memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = memoryGame)
-        context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
-        return render(request, 'memorynum.html', context=context)
+            while room_code in room_codes:
+                room_code = random.randint(100000, 999999)
+            room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client_id)
+            memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = memoryGame)
+            context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
+            return render(request, 'memorynum.html', context=context)
+        except Exception as e:
+            print(e)            
+            return Response(status=400)
 
 def random_with_N_digits(n):
     range_start = 10**(n-1)
@@ -67,7 +72,19 @@ class GetMemoryNum(APIView):
             if room:
                 memory_room = MemoryRoom.objects.filter(room_id = room.id).first()
                 number = memory_room.memorynum.number
-                context = {"number" : number, "room_code" : room_code, "role" : "Client"}
+                category = memory_room.memorynum.category               
+                therapist_id = memory_room.memorynum.therapist_id
+                client_id = memory_room.memorynum.client_id
+                speed=None
+                if category=="easy":
+                    speed=2500
+                elif category=="medium":
+                    speed=2000
+                elif category=="hard":
+                    speed=1000
+                else:
+                    speed=500               
+                context = {"number" : number, "room_code" : room_code, "role" : "Client", "therapist_id":therapist_id,"client_id":client_id,"speed":speed}
                 return render(request, 'memorynum.html', context=context)
             else:
                 return Response('Room not found.....................')
