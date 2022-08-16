@@ -95,11 +95,11 @@ class MemoryPerformanceView(APIView):
     def post(self,request):
         client_id=request.POST.get('client_id')
         inputnum=request.POST.get('inputnum')
-        memoryroom=request.POST.get('room_code')
+        room_code=request.POST.get('room_code')
         event_id=request.POST.get('event_id')
-
+        room = Room.objects.filter(room_code = room_code).first()
+        memoryroom = MemoryRoom.objects.filter(room_id = room.id).first()
         memorynum=MemoryNum.objects.filter(number=inputnum,client_id=client_id)
-
         if memorynum:
             mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynum=inputnum,is_correct=True)
         else:
