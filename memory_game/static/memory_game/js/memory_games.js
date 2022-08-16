@@ -90,8 +90,9 @@ $('.save-memoize-value-btn')
     const val = $('.input-memoize-value').val()
     console.log(val)
     let data = {
-      client_id: id,
+      client_id: client_id,
       inputnum: parseInt(val),
+      displaynum: parseInt(digit),
       room_code: parseInt(room_code),
       event_id: parseInt((Math.random() * 10).toFixed(0)),
     }

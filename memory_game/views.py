@@ -93,20 +93,20 @@ class GetMemoryNum(APIView):
 
 class MemoryPerformanceView(APIView):
     def post(self,request):
-        client_id=request.POST.get('client_id')
-        inputnum=request.POST.get('inputnum')
-        room_code=request.POST.get('room_code')
-        event_id=request.POST.get('event_id')
+        client_id=request.data.get('client_id')
+        displaynum = request.data.get('displaynum')
+        inputnum=request.data.get('inputnum')
+        room_code=request.data.get('room_code')
+        event_id=request.data.get('event_id')
         room = Room.objects.filter(room_code = room_code).first()
         memoryroom = MemoryRoom.objects.filter(room_id = room.id).first()
-        memorynum=MemoryNum.objects.filter(number=inputnum,client_id=client_id)
-        if memorynum:
-            mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=inputnum,is_correct=True)
+        memorynum=MemoryNum.objects.filter(number=displaynum, client_id=client_id).first()
+        if memorynum.number == str(inputnum):
+            mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum,is_correct=True)
         else:
-            mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=inputnum,is_correct=False)
+            mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum,is_correct=False)
 
-        memory_performance_data = MemoryPerformanceSerializer(mPerformance, many = True)
-
+        memory_performance_data = MemoryPerformanceSerializer(mPerformance)
         context = {"mPerformance" : memory_performance_data.data}
         return Response(context)
 
