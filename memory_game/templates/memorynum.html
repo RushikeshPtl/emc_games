@@ -22,18 +22,32 @@
     <div class="mdc-typography center">
         <span class="mdc-typography--headline5 text-white text-center">HelloHERO Memory Game</span>
     </div>
+    {% if role == 'Therapist' %}
+    <div class="row col-sm-12 mt-2 pt-3 memory_game">
+        <div class="col-sm-5 pr-0">
+            <input type="text" class="link-to-copy w-100 h-100 bg-white" disabled />
+        </div>
+        <div class="col-sm-3 pl-0">
+            <button type="button" class="mdc-button mdc-button--raised  share-play-memory-game-btn">
+                <div class="mdc-button__ripple"></div>
+                <div class="spinner-border d-none" role="status"></div>
+                <span class="mdc-button__label">Share Quiz</span>
+            </button>
+        </div>
+
+    </div>
     <div class="row col-md-12 mt-3 pt-3">
-        
+
         <div class="col-md-4">
             <h5 class="text-white pl-1">Number</h5>
             <div class="container">
                 {{number}}
-                
+
             </div>
-            <input type="button" id="myBtn" onclick="show()" value="Start">
-            
+            <input type="button" id="start-memory-game-btn" onclick="show()" value="Start">
+
         </div>
-        
+
         <div class="col-md-8 play-quiz">
             {% include 'partials/preview_quiz_modal.html' %}
             {% include 'partials/performance_show_modal.html' %}
@@ -49,55 +63,56 @@
 
             <!-- <img src="{% static 'quiz/images/failed.png' %}" width="250px" height="auto"/>             -->
         </div>
-        
+
 
     </div>
+    {% endif %}
+
+    <div class="row col-sm-12 memory-number-container-height d-none">
+        {% if role == 'Client' %}
+        <p class="mx-auto student-note mt-0">Now, You have to remember the Numbers displayed in the below box. Remember
+            the number in the order they displayed.</p>
+        {% endif %}
+        <div class="col-sm-8 memory-number-container h-100">
+
+        </div>
+        {% if role == 'Client' %}
+        <input type="text" class="input-memoize-value form-control d-none" placeholder="Enter the Number" />
+        <button type="button" class="mdc-button mdc-button--raised  save-memoize-value-btn d-none">
+            <div class="mdc-button__ripple"></div>
+            <div class="spinner-border d-none" role="status"></div>
+            <span class="mdc-button__label">Submit</span>
+        </button>
+        {% endif %}
+    </div>
+
+
+    <aside class="mdc-snackbar quiz-link-cpy-snackbar" aria-label="copyclipboard">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+            <div class="mdc-snackbar__label" aria-atomic="false">
+                Link copied to clipboard
+            </div>
+
+        </div>
+    </aside>
+    <aside class="mdc-snackbar quiz-join-snackbar" aria-label="roomjoined">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+            <div class="mdc-snackbar__label" aria-atomic="false">
+
+            </div>
+
+        </div>
+    </aside>
     <script type="text/javascript" src="{% static 'quiz/js/jquery-3.6.0.min.js' %}"></script>
-    
-    <script>      
-
-
-    var num = {{number}};
-    var digits = num.toString().split('');
-    var digit = num.toString();
-       
-    var realDigits = digits.map(Number) 
-    var visible = 0;
-   
-    function show(){
-    const id= setInterval(displayVal,{{speed}}) 
-   
-    
-    function displayVal(){
-
-    if (visible == realDigits.length) {
-      clearInterval(id);
-    } else {
-   
-    
-    var fullWidth = window.innerWidth;
-    var fullHeight = window.innerHeight;
-        
-    var elem = document.createElement("div");   
-    
-    elem.setAttribute("id", "mydiv");   
-    elem.textContent = realDigits[visible];      
-    $(elem).fadeOut({{speed}});
-    elem.style.position = "absolute";
-    elem.style.fontSize= 50+"px";
-    elem.style.left = Math.round(Math.random() * (1024 - 512) + 512) + "px";
-    elem.style.top = Math.round(Math.random() * (720 - 360) + 360) + "px";
-    elem.style.margin="auto";
-    elem.style.padding=10+"px";
-    document.body.appendChild(elem);       
-       
-    visible++;
-    }
-    }    
-    }   
-
-
-
+    <script type="text/javascript">
+        var num = '{{ number }}';
+        var room_code = '{{ room_code }}';
+        var role = '{{ role }}';
+        var speed = '{{ speed }}'
+        var id = '{{ client_id }}'
+    </script>
+    <script type="text/javascript" src="{% static 'memory_game/js/memory_games.js' %}"></script>
+    <script>
     </script>
 </body>
 
