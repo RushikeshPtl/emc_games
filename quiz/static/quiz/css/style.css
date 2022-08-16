@@ -125,3 +125,14 @@ input[name='therapist_id']::-webkit-outer-spin-button {
   border: none;
   border-radius: 4px 0px 0px 4px;
 }
+
+.memory-number-container-height {
+  position: relative;
+  height: 500px;
+}
+
+.memory-number-container {
+  position: relative;
+  border: 1px solid #fff;
+  border-radius: 10px;
+}
