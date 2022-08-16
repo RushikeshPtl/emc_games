@@ -21,7 +21,7 @@ class MemoryPerformanceSerializer(ModelSerializer):
 
     class Meta:
         model = MemoryPerformance
-        fields = ('id', 'user_id', 'event_id', 'memory_number', 'is_correct')
+        fields = ('id', 'user_id', 'event_id', 'memory_number','inputnumber', 'is_correct')
 
     def get_memory_number(self, obj):
         return obj.memorynumber.number
