@@ -49,9 +49,9 @@ class MemoryNumView(APIView):
             else:
                 speed=500
             if request.data.get('room_code'):
-                room_code = request.data.get('room_code')
-                room = Room.objects.filter(room_code = room_code).first()
-                memory_room = MemoryRoom.objects.filter(room_id = room.id)
+                room_code = request.data.get('room_code')               
+                room = Room.objects.filter(room_code = room_code).first()                
+                memory_room = MemoryRoom.objects.filter(room_id = room.id).first()                
             else:
                 room_codes = Room.objects.all().values('room_code')
                 room_code = random.randint(100000, 999999)
