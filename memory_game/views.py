@@ -102,10 +102,9 @@ class MemoryPerformanceView(APIView):
         memoryroom = MemoryRoom.objects.filter(room_id = room.id).first()
         memorynum=MemoryNum.objects.filter(number=displaynum, client_id=client_id).first()
         if memorynum.number == str(inputnum):
-            mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnum=str(inputnum), is_correct=True)
+            mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnumber = str(inputnum), is_correct=True)
         else:
-            mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnum = str(inputnum),is_correct=False)
-
+            mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnumber = str(inputnum),is_correct=False)
         memory_performance_data = MemoryPerformanceSerializer(mPerformance)
         context = {"mPerformance" : memory_performance_data.data}
         return Response(context)
