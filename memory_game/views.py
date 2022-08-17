@@ -23,7 +23,7 @@ class MemoryNumView(APIView):
         return render(request, 'create_memorynum.html')
 
     def post(self, request):  
-        try:      
+        try:
             drange=request.POST.get('range')
             therapist_id = request.POST.get('therapist_id')
             client_id = request.POST.get('client_id')
@@ -48,12 +48,19 @@ class MemoryNumView(APIView):
                 speed=1000
             else:
                 speed=500
-            room_codes = Room.objects.all().values('room_code')
-            room_code = random.randint(100000, 999999)
-            while room_code in room_codes:
+            if request.data.get('room_code'):
+                room_code = request.data.get('room_code')
+                room = Room.objects.filter(room_code = room_code).first()
+                memory_room = MemoryRoom.objects.filter(room_id = room.id)
+            else:
+                room_codes = Room.objects.all().values('room_code')
                 room_code = random.randint(100000, 999999)
-            room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client_id)
-            memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = memoryGame)
+                while room_code in room_codes:
+                    room_code = random.randint(100000, 999999)
+                room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client_id)
+                memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = memoryGame)
+            memoryGame.memoryroom = memory_room
+            memoryGame.save()
             context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
             return render(request, 'memorynum.html', context=context)
         except Exception as e:
@@ -71,10 +78,11 @@ class GetMemoryNum(APIView):
             room = Room.objects.filter(room_code = room_code).first()
             if room:
                 memory_room = MemoryRoom.objects.filter(room_id = room.id).first()
-                number = memory_room.memorynum.number
-                category = memory_room.memorynum.category               
-                therapist_id = memory_room.memorynum.therapist_id
-                client_id = memory_room.memorynum.client_id
+                memory_num = MemoryNum.objects.filter(memoryroom_id = memory_room.id).first()
+                number = memory_num.number
+                category = memory_num.category         
+                therapist_id = memory_num.therapist_id
+                client_id = memory_num.client_id
                 speed=None
                 if category=="easy":
                     speed=2500
@@ -100,7 +108,7 @@ class MemoryPerformanceView(APIView):
         event_id=request.data.get('event_id')
         room = Room.objects.filter(room_code = room_code).first()
         memoryroom = MemoryRoom.objects.filter(room_id = room.id).first()
-        memorynum=MemoryNum.objects.filter(number=displaynum, client_id=client_id).first()
+        memorynum=MemoryNum.objects.filter(number=displaynum, client_id=client_id, memoryroom_id = memoryroom.id).first()
         if memorynum.number == str(inputnum):
             mPerformance=MemoryPerformance.objects.create(user_id=client_id,event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnumber = str(inputnum), is_correct=True)
         else:
@@ -109,8 +117,8 @@ class MemoryPerformanceView(APIView):
         context = {"mPerformance" : memory_performance_data.data}
         return Response(context)
 
-    def get(self, request, client_id):        
-        if client_id:            
+    def get(self, request, client_id):
+        if client_id:
             mPerformance = MemoryPerformance.objects.filter(user_id = client_id)            
             correct_answers = mPerformance.filter(is_correct = True).count()
             memory_performance_data = MemoryPerformanceSerializer(mPerformance, many = True)

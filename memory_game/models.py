@@ -9,6 +9,7 @@ class MemoryNum(models.Model):
     numberdigit = models.IntegerField()
     therapist_id = models.IntegerField()
     client_id = models.IntegerField(default="0")
+    memoryroom = models.ForeignKey('MemoryRoom', null=True, on_delete=models.CASCADE)
     # no_of_questions = models.IntegerField()
     class Meta:
         db_table = 'MemoryNums'
@@ -36,7 +37,6 @@ class MemoryPerformance(models.Model):
 
 class MemoryRoom(models.Model):
     room = models.ForeignKey(Room,null=True, on_delete=models.CASCADE)    
-    memorynum = models.ForeignKey(MemoryNum, on_delete=models.CASCADE,null=True)
     event_id = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now=True)
 
