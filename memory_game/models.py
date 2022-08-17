@@ -23,8 +23,7 @@ class MemoryPerformance(models.Model):
     user_id = models.IntegerField()
     event_id = models.IntegerField()    
     memoryroom = models.ForeignKey('MemoryRoom', null=True, on_delete=models.CASCADE)    
-    memorynumber = models.ForeignKey('MemoryNum', null=True, on_delete=models.CASCADE)
-    inputnum = models.CharField(max_length=100, null=True)   
+    memorynumber = models.ForeignKey('MemoryNum', null=True, on_delete=models.CASCADE)    
     is_correct = models.BooleanField()
 
     class Meta:
@@ -44,4 +43,4 @@ class MemoryRoom(models.Model):
         db_table = 'MemoryRoom'
     
     def __str__(self):
-        return str(self.room_code)
+        return str(self.room)
