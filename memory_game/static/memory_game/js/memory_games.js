@@ -9,6 +9,14 @@ var digit = num.toString()
 var realDigits = digits.map(Number)
 var visible = 0
 
+const setInitalValues = (num, speed) => {
+  digits = num.toString().split('')
+  digit = num.toString()
+  realDigits = digits.map(Number)
+  visible = 0
+  speed = speed
+}
+
 const attachMDCEffect = () => {
   //   const radioboxes =
   //     role === 'Therapist'
@@ -26,6 +34,17 @@ const attachMDCEffect = () => {
   formModal = new mdc.dialog.MDCDialog(
     document.querySelector('.create-memory-game-modal')
   )
+}
+
+//---- display various notification messages with snackbar ----//
+const showSnackbar = (text) => {
+  const snackbar = snackbars.find((ele) =>
+    $(ele.root).hasClass('quiz-join-snackbar')
+  )
+
+  snackbar.timeoutMs = 4000
+  snackbar.labelText = text
+  snackbar.open()
 }
 
 const displayVal = () => {
@@ -78,14 +97,7 @@ const setupRoomJoined = (payload) => {
     role === 'Therapist' &&
     (payload.role === 'Client') & (payload.status === 1)
   ) {
-    const snackbar = snackbars.find((ele) =>
-      $(ele.root).hasClass('quiz-join-snackbar')
-    )
-    console.log(snackbar)
-    snackbar.timeoutMs = 4000
-    snackbar.labelText = 'Client has joined'
-    snackbar.open()
-    // setupTherapistUI()
+    showSnackbar('Client has joined')
   }
 }
 
@@ -113,7 +125,6 @@ $('.save-memoize-value-btn')
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        console.log(resp)
         try {
           let data = {
             type: 'show-score',
@@ -138,15 +149,18 @@ $('#start-memory-game-btn')
       start: true,
     }
     socket.send(JSON.stringify({ data }))
+
     show()
   })
 
 const startQuizClientSide = () => {
   show()
+  $('.input-memoize-value').val('')
+  $('.save-memoize-value-btn').prop('disabled', false)
 }
 
 const setupModalListener = () => {
-  var slider = document.getElementById('edit-range')
+  const slider = document.getElementById('edit-range')
   var output = document.getElementById('edit-size')
   output.innerHTML = slider.value
 
@@ -159,44 +173,52 @@ $('.create-new-memory-number-btn')
   .off()
   .click((evt) => {
     evt.preventDefault()
-    console.log(
-      document.querySelector('input[name="inlineRadioOptions"]:checked')
-    )
+
     let checkedEle = document.querySelector(
       'input[name="inlineRadioOptions"]:checked'
     )
-    console.log($('#edit-size'))
     let range = $('#edit-size').text()
-    console.log(range)
 
     if (checkedEle == null) {
       $('.error-txt').text('Please select Speed')
       return
     }
-    let data = {
-      client_id: parseInt(client_id),
-      therapist_id: parseInt(therapist_id),
-      range: parseInt(range),
-      inlineRadioOptions: checkedEle.value,
-      room_code: parseInt(room_code),
-    }
-    console.log(data)
+    let postData = new FormData()
+    postData.append('client_id', parseInt(client_id))
+    postData.append('therapist_id', parseInt(therapist_id))
+    postData.append('range', parseInt(range))
+    postData.append('inlineRadioOptions', checkedEle.value)
+    postData.append('room_code', parseInt(room_code))
+
     fetch(`${API_URL}/memory-game/create-memory-game/`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'X-CSRFToken': document.cookie.split('=')[1],
       },
-      body: JSON.stringify(data),
+      body: postData,
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        console.log(resp)
+        setInitalValues(resp.number, resp.speed)
+        formModal.close()
+        let data = {
+          type: 'reset-number',
+          newData: resp,
+        }
+        socket.send(JSON.stringify({ data }))
+        $('.show-memory-number').text(resp.number)
+        showSnackbar('Now, click Start to play with client.')
       })
       .catch((err) => {
         console.log(err)
       })
   })
+
+const resetGame = (payload) => {
+  setInitalValues(payload.number, payload.speed)
+  $('.input-memoize-value').addClass('d-none')
+  $('.save-memoize-value-btn').addClass('d-none')
+}
 
 $('#change-memory-game-btn')
   .off()
@@ -269,7 +291,7 @@ const startWebsocketConnection = () => {
 
   socket.onmessage = (m) => {
     console.log(m.data)
-    // let payload = JSON.parse(m.data)
+
     let payload = JSON.parse(m.data).payload
     switch (payload.type) {
       case 'room-joined':
@@ -278,11 +300,8 @@ const startWebsocketConnection = () => {
       case 'start-quiz':
         role === 'Client' && startQuizClientSide()
         break
-      case 'start-quiz-timer':
-        startTimer()
-        break
-      case 'chosen-ans':
-        role === 'Therapist' && updateTherapistUI(payload)
+      case 'reset-number':
+        role === 'Client' && resetGame(payload.newData)
         break
       case 'show-score':
         showScoreModal(payload.performance)
