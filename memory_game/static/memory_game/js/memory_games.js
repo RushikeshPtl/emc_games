@@ -18,10 +18,14 @@ const attachMDCEffect = () => {
   //   radioBtns = [...radioboxes].map((ele) => new mdc.radio.MDCRadio.attachTo(ele))
   const bars = document.querySelectorAll('.mdc-snackbar')
   snackbars = [...bars].map((ele) => new mdc.snackbar.MDCSnackbar.attachTo(ele))
+  const btns = document.querySelectorAll('.mdc-button')
 
-  //   dialog = new mdc.dialog.MDCDialog(
-  //     document.querySelector('.performance-show-modal')
-  //   )
+  dialog = new mdc.dialog.MDCDialog(
+    document.querySelector('.performance-show-modal')
+  )
+  formModal = new mdc.dialog.MDCDialog(
+    document.querySelector('.create-memory-game-modal')
+  )
 }
 
 const displayVal = () => {
@@ -30,30 +34,32 @@ const displayVal = () => {
     $('.input-memoize-value').removeClass('d-none')
     $('.save-memoize-value-btn').removeClass('d-none')
   } else {
-    var fullWidth = window.innerWidth
-    var fullHeight = window.innerHeight
-    console.log($('.memory-number-container'))
     let parent = $('.memory-number-container')[0]
     let width = parent.clientWidth
     let height = parent.clientHeight
 
-    var elem = document.createElement('div')
+    let elem = document.createElement('div')
 
     elem.setAttribute('id', 'mydiv')
     elem.textContent = realDigits[visible]
     $(elem).fadeOut(speed)
     elem.style.position = 'absolute'
-    elem.style.fontSize = 50 + 'px'
+    elem.style.fontSize = 40 + 'px'
+
     elem.style.left =
-      Math.round(Math.random() * (width - width / 2) + width / 2) + 'px'
+      Math.round(Math.random() * (width - elem.clientWidth)) + 'px'
     elem.style.top =
-      Math.round(Math.random() * (height - height / 2) + height / 2) + 'px'
-    elem.style.margin = 'auto'
-    elem.style.padding = 10 + 'px'
+      Math.round(Math.random() * (height - elem.clientHeight)) + 'px'
+    // elem.style.padding = 10 + 'px'
+    console.log(elem)
     $('.memory-number-container')[0].append(elem)
-    // document.body.appendChild(elem)
 
     visible++
+
+    // elem.style.left =
+    //   Math.round(Math.random() * (width - width / 2) + width / 2) + 'px'
+    // elem.style.top =
+    //   Math.round(Math.random() * (height - height / 2) + height / 2) + 'px'
   }
 }
 const show = () => {
@@ -108,6 +114,19 @@ $('.save-memoize-value-btn')
       .then((resp) => resp.json())
       .then((resp) => {
         console.log(resp)
+        try {
+          let data = {
+            type: 'show-score',
+            performance: resp.mPerformance,
+          }
+          socket.send(JSON.stringify({ data }))
+          $('.save-memoize-value-btn').prop('disabled', true)
+        } catch (error) {
+          console.log(error)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
       })
   })
 
@@ -119,10 +138,115 @@ $('#start-memory-game-btn')
       start: true,
     }
     socket.send(JSON.stringify({ data }))
+    show()
   })
 
 const startQuizClientSide = () => {
   show()
+}
+
+const setupModalListener = () => {
+  var slider = document.getElementById('edit-range')
+  var output = document.getElementById('edit-size')
+  output.innerHTML = slider.value
+
+  slider.oninput = function () {
+    output.innerHTML = this.value
+  }
+}
+
+$('.create-new-memory-number-btn')
+  .off()
+  .click((evt) => {
+    evt.preventDefault()
+    console.log(
+      document.querySelector('input[name="inlineRadioOptions"]:checked')
+    )
+    let checkedEle = document.querySelector(
+      'input[name="inlineRadioOptions"]:checked'
+    )
+    console.log($('#edit-size'))
+    let range = $('#edit-size').text()
+    console.log(range)
+
+    if (checkedEle == null) {
+      $('.error-txt').text('Please select Speed')
+      return
+    }
+    let data = {
+      client_id: parseInt(client_id),
+      therapist_id: parseInt(therapist_id),
+      range: parseInt(range),
+      inlineRadioOptions: checkedEle.value,
+      room_code: parseInt(room_code),
+    }
+    console.log(data)
+    fetch(`${API_URL}/memory-game/create-memory-game/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.cookie.split('=')[1],
+      },
+      body: JSON.stringify(data),
+    })
+      .then((resp) => resp.json())
+      .then((resp) => {
+        console.log(resp)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  })
+
+$('#change-memory-game-btn')
+  .off()
+  .click((evt) => {
+    evt.preventDefault()
+    let formContainer = $('.form-fields-container').removeClass('d-none')
+    console.log(formContainer)
+    $(
+      '.create-memory-game-modal .mdc-dialog__container .mdc-dialog__surface'
+    ).append(formContainer)
+    console.log(therapist_id)
+    formModal.open()
+    setupModalListener()
+  })
+
+const showScoreModal = (performance) => {
+  console.log(performance)
+  console.log(role)
+  if (role === 'Therapist') {
+    dialog.open()
+    $('.performance-show-modal .score-txt')
+      .text(`Client entered:${performance.inputnumber}`)
+      .addClass('text-dark')
+    $('.performance-show-modal img.success').addClass('d-none')
+    $('.performance-show-modal img.failed').addClass('d-none')
+    $('#change-memory-game-btn').removeClass('d-none')
+  } else if (role === 'Client') {
+    if (performance.is_correct) {
+      dialog.open()
+      $('.performance-show-modal .score-txt')
+        .text(`Hurray!! You memorize the number..!`)
+        .addClass('text-dark')
+      $('.performance-show-modal .success-txt')
+        .text(`Number was: ${performance.memory_number}`)
+        .addClass('text-dark')
+      $('.performance-show-modal img.success').removeClass('d-none')
+      $('.performance-show-modal img.failed').addClass('d-none')
+    } else {
+      dialog.open()
+      $('.performance-show-modal .score-txt')
+        .text(`Oops!! You entered wrong number.`)
+        .addClass('text-dark')
+      $('.performance-show-modal .success-txt')
+        .text(`Number was: ${performance.memory_number}`)
+        .addClass('text-dark')
+      $('.performance-show-modal img.success').addClass('d-none')
+      $('.performance-show-modal img.failed').removeClass('d-none')
+    }
+    return true
+  }
 }
 
 const startWebsocketConnection = () => {
@@ -161,7 +285,7 @@ const startWebsocketConnection = () => {
         role === 'Therapist' && updateTherapistUI(payload)
         break
       case 'show-score':
-        role === 'Therapist' && showScoreModal(payload.percent)
+        showScoreModal(payload.performance)
         break
       case 'end-quiz':
         endQuiz()
@@ -192,6 +316,7 @@ $(document).ready(() => {
   console.log(speed)
   console.log(room_code)
   console.log(role)
+  console.log(client_id)
   //   let url = new URL(window.location.href)
   //   let params = new URLSearchParams(url.search)
 

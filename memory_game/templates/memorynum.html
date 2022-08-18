@@ -44,13 +44,24 @@
                 {{number}}
 
             </div>
-            <input type="button" id="start-memory-game-btn" onclick="show()" value="Start">
+            <div class="d-flex justify-content-between w-80">
+                <button type="button" id="start-memory-game-btn" class="mdc-button mdc-button--raised">
+                    <div class="mdc-button__ripple"></div>
+                    <div class="spinner-border d-none" role="status"></div>
+                    <span class="mdc-button__label">Start</span>
+                </button>
+                <button type="button" id="change-memory-game-btn" class="mdc-button mdc-button--raised d-none">
+                    <div class="mdc-button__ripple"></div>
+                    <div class="spinner-border d-none" role="status"></div>
+                    <span class="mdc-button__label">Try new number</span>
+                </button>
+            </div>
 
         </div>
 
         <div class="col-md-8 play-quiz">
             {% include 'partials/preview_quiz_modal.html' %}
-            {% include 'partials/performance_show_modal.html' %}
+
             <div class="mt-2 text-center">
                 <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised d-none"
                     id="save-play-quiz-btn">
@@ -103,13 +114,23 @@
 
         </div>
     </aside>
+    <div class="mdc-dialog create-memory-game-modal">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface bg-dark" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
+                aria-describedby="my-dialog-content" style="padding: 20px;"></div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+    {% include 'partials/performance_show_modal.html' %}
+    {% include 'create_memoygames_form.html' %}
     <script type="text/javascript" src="{% static 'quiz/js/jquery-3.6.0.min.js' %}"></script>
     <script type="text/javascript">
         var num = '{{ number }}';
         var room_code = '{{ room_code }}';
         var role = '{{ role }}';
         var speed = '{{ speed }}';
-        var client_id = '{{ client_id }}'
+        var client_id = '{{ client_id }}';
+        var therapist_id = '{{ therapist_id }}';
     </script>
     <script type="text/javascript" src="{% static 'memory_game/js/memory_games.js' %}"></script>
     <script>
