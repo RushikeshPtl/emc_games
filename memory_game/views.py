@@ -125,10 +125,13 @@ class MemoryPerformanceView(APIView):
 
     def get(self, request, client_id):
         if client_id:
-            mPerformance = MemoryPerformance.objects.filter(user_id = client_id)            
-            correct_answers = mPerformance.filter(is_correct = True).count()
-            memory_performance_data = MemoryPerformanceSerializer(mPerformance, many = True)
-            context = {"performance" : memory_performance_data.data, "correct_answers" : correct_answers}
-            return Response(context)
+            mPerformance = MemoryPerformance.objects.filter(user_id = client_id)
+            if mPerformance:            
+                correct_answers = mPerformance.filter(is_correct = True).count()
+                memory_performance_data = MemoryPerformanceSerializer(mPerformance, many = True)
+                context = {"performance" : memory_performance_data.data, "correct_answers" : correct_answers}
+                return Response(context)
+            else:
+                return Response("Invalide client id...")
         else:
             return Response("Invalide client id...")
