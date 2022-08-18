@@ -51,7 +51,12 @@ class MemoryNumView(APIView):
             if request.data.get('room_code'):
                 room_code = request.data.get('room_code')               
                 room = Room.objects.filter(room_code = room_code).first()                
-                memory_room = MemoryRoom.objects.filter(room_id = room.id).first()                
+                memory_room = MemoryRoom.objects.filter(room_id = room.id).first() 
+
+                memoryGame.memoryroom = memory_room
+                memoryGame.save()
+                context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
+                return Response(context)               
             else:
                 room_codes = Room.objects.all().values('room_code')
                 room_code = random.randint(100000, 999999)
@@ -59,10 +64,11 @@ class MemoryNumView(APIView):
                     room_code = random.randint(100000, 999999)
                 room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client_id)
                 memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = memoryGame)
-            memoryGame.memoryroom = memory_room
-            memoryGame.save()
-            context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
-            return render(request, 'memorynum.html', context=context)
+
+                memoryGame.memoryroom = memory_room
+                memoryGame.save()
+                context={"number":number, "therapist_id":therapist_id,"client_id":client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
+                return render(request, 'memorynum.html', context=context)
         except Exception as e:
             print(e)            
             return Response(status=400)
