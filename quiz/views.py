@@ -116,9 +116,10 @@ class PerformanceView(APIView):
         correct_answers = performance.filter(is_correct = True).count()
         performance_data = PerformanceSerializer(performance, many = True)
         percent = (correct_answers/total_questions) * 100
-        room_id = QuizRoom.objects.get(room_code=room_code).id
+        room = Room.objects.filter(room_code=room_code).first()
+        quizroom_id = QuizRoom.objects.get(room_id=room.id).id
         result = Result(
-            room_id = room_id,
+            room_id = quizroom_id,
             user_id = user_id,
             quiz_id = quiz_id,
             correct_answers = correct_answers,

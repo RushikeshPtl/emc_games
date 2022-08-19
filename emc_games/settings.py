@@ -32,7 +32,10 @@ SECRET_KEY = 'django-insecure-kw-r7)=g$e1pl_r@e&ddj73&gili^*bzy=y2hca2tuqekitqzc
 DEBUG = True
 
 ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = ['ec2-13-59-36-47.us-east-2.compute.amazonaws.com']
+host = 'localhost'
+if env('HOST_TYPE') == 'production':
+    ALLOWED_HOSTS = ['ec2-18-217-7-237.us-east-2.compute.amazonaws.com']
+    host = 'ec2-18-217-7-237.us-east-2.compute.amazonaws.com'
 
 
 # Application definition
@@ -101,7 +104,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("localhost", 6379)],
+            "hosts": [(host, 6379)],
             # "hosts": [("ec2-13-59-36-47.us-east-2.compute.amazonaws.com", 6379)],
         },
     },

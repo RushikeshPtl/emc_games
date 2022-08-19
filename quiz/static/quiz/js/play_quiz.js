@@ -1,4 +1,5 @@
 const API_URL = new URL(window.location).origin
+const host = new URL(window.location).host
 // let checked = []
 // var radioBtns = []
 // var snackbars = []
@@ -289,7 +290,7 @@ const startWebsocketConnection = () => {
   console.log(quiz_id)
   console.log(room_code)
   console.log(role)
-  socket = new WebSocket(`ws://127.0.0.1:8000/ws/game/${room_code}`)
+  socket = new WebSocket(`ws://${host}/ws/game/${room_code}`)
   console.log(socket)
   socket.onopen = (e) => {
     if (role === 'Client') {
