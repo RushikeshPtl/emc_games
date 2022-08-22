@@ -232,7 +232,8 @@ const saveQuizData = () => {
   let data = {
     quiz_id: parseInt(quiz_id),
     event_id: parseInt(event_id),
-    user_id: parseInt(((Math.random() * 18)+1).toFixed(0)),
+    // user_id: parseInt(((Math.random() * 18)+1).toFixed(0)),
+    user_id: user_id,
     answers: answers,
     room_code: room_code,
   }

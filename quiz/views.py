@@ -76,7 +76,7 @@ class GetRoom(APIView):
                         room_code = random.randint(100000, 999999)
                         while room_code in room_codes:
                             room_code = random.randint(100000, 999999)
-                        rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(user_id=client_id))
+                        rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(user_id=client_id).id)
                         room = QuizRoom.objects.create(room_id = rm.id, quiz_id = id, event_id = request.query_params.get('event_id'))
                     context = {'room_code' : room_code, 'role' : 'Therapist', 'client_id':client_id, 'quiz_id' : quiz.id, 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
                     return render(request, 'quiz.html', context=context)
@@ -112,14 +112,11 @@ class PerformanceView(APIView):
             answer_id = answer.get('answer_id')
             if answer_id != '':
                 is_correct = Answer.objects.get(pk = answer_id).is_correct
-                Performance.objects.create(user_id = Client.objects.get(user_id=user_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct)
+                Performance.objects.create(user = Client.objects.get(user_id=user_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct)
             else:
-                Performance.objects.create(user_id = Client.objects.get(user_id=user_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, is_correct = False)
-        print("quiz_id",quiz_id)
-        print("event_id",event_id)
-        print("user_id",Client.objects.get(user_id=user_id))
+                Performance.objects.create(user = Client.objects.get(user_id=user_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, is_correct = False)
         # performance = Performance.objects.filter(quiz_id = quiz_id, user_id = Client.objects.get(user_id=user_id), event_id = event_id)
-        performance = Performance.objects.filter(quiz_id = quiz_id, user_id = Client.objects.get(user_id=user_id))
+        performance = Performance.objects.filter(quiz_id = quiz_id, user = Client.objects.get(user_id=user_id))
         print(performance)
         total_questions = performance.count()
         correct_answers = performance.filter(is_correct = True).count()
@@ -133,7 +130,7 @@ class PerformanceView(APIView):
         quizroom_id = QuizRoom.objects.get(room_id=room.id).id
         result = Result(
             room_id = quizroom_id,
-            user_id = Client.objects.get(user_id=user_id),
+            user = Client.objects.get(user_id=user_id),
             quiz = Quiz.objects.get(id=quiz_id),
 
             correct_answers = correct_answers,
@@ -149,7 +146,7 @@ class PerformanceView(APIView):
         if quiz_id:
             user_id = request.data.get("User ID")
             event_id = request.data.get("Event ID")
-            performance = Performance.objects.filter(quiz_id = quiz_id, user_id = Client.objects.get(user_id=user_id), event_id = event_id)
+            performance = Performance.objects.filter(quiz_id = quiz_id, user_id = user_id, event_id = event_id)
             total_questions = performance.count()
             correct_questions = performance.filter(is_correct = True).count()
             performance_data = PerformanceSerializer(performance, many = True)

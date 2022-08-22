@@ -44,7 +44,7 @@ class PerformanceSerializer(ModelSerializer):
 
     def get_user_id(self, obj):
         if obj.answer:
-            return obj.user_id.user_id
+            return obj.user.user_id
 
 class ResultSerializer(ModelSerializer):
     quiz_title = serializers.SerializerMethodField('get_quiz_title')
@@ -66,4 +66,4 @@ class ResultSerializer(ModelSerializer):
         return obj.correct_answers + obj.wrong_answers
 
     def get_user_id(self, obj):
-        return obj.user_id.user_id
+        return obj.user.user_id

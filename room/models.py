@@ -16,7 +16,7 @@ class Game(models.Model):
 class Room(models.Model):
     room_code = models.IntegerField()
     therapist_id = models.IntegerField()
-    client_id = models.ForeignKey(Client, on_delete=models.CASCADE, null=True) 
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True) 
     is_over = models.BooleanField('is_over', default=False)
     game = models.ForeignKey(Game, on_delete=models.PROTECT, null=True)
 
