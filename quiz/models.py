@@ -65,7 +65,7 @@ class Performance(models.Model):
     is_correct = models.BooleanField()
 
     class Meta:
-        db_table = 'Performaces'
+        db_table = 'Performances'
 
     def __str__(self):
         return str(self.client)

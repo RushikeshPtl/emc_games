@@ -103,8 +103,6 @@ class PerformanceView(APIView):
         answers = request.data.get('answers')
         room_code = request.data.get('room_code')
         quizroom = QuizRoom.objects.get(room_id = Room.objects.get(room_code = room_code).id)
-        print("user_id",client_id)
-        print("room_code",room_code)
         for answer in answers:
             question_id = answer.get('question_id')
             answer_id = answer.get('answer_id')
@@ -113,17 +111,11 @@ class PerformanceView(APIView):
                 Performance.objects.create(client = Client.objects.get(client_id=client_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct, quizroom = quizroom)
             else:
                 Performance.objects.create(client = Client.objects.get(client_id=client_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, is_correct = False, quizroom = quizroom)
-        # performance = Performance.objects.filter(quiz_id = quiz_id, user_id = Client.objects.get(user_id=user_id), event_id = event_id)
         performance = Performance.objects.filter(quiz_id = quiz_id, client = Client.objects.get(client_id=client_id), quizroom = quizroom)
-        print(performance)
         total_questions = performance.count()
         correct_answers = performance.filter(is_correct = True).count()
         performance_data = PerformanceSerializer(performance, many = True)
-        print(total_questions)
-        print(correct_answers)
         percent = (correct_answers/total_questions) * 100
-
-        
         room = Room.objects.filter(room_code=room_code).first()
         quizroom_id = QuizRoom.objects.get(room_id=room.id).id
         result = Result(
