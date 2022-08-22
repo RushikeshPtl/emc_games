@@ -385,7 +385,7 @@ $('.share-play-quiz-btn')
             $(ele.root).hasClass('quiz-link-cpy-snackbar')
           )
           snackbar.timeoutMs = 4000
-          startWebsocketConnection()
+          
           snackbar.open()
         },
         (err) => {
@@ -400,6 +400,6 @@ $('.share-play-quiz-btn')
         "Can't copy to clipboard.Please manually copy the link."
       snackbar.timeoutMs = 4000
       snackbar.open()
-      startWebsocketConnection()
+      
     }
   })
