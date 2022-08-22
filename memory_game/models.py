@@ -1,3 +1,4 @@
+from http import client
 from django.db import models
 from room.models import Room
 from client_app.models import *
@@ -9,7 +10,7 @@ class MemoryNum(models.Model):
     number = models.CharField(max_length=10)
     numberdigit = models.IntegerField()
     therapist_id = models.IntegerField()
-    client_id = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='memory_game_numbers')  
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='memory_game_numbers')  
     memoryroom = models.ForeignKey('MemoryRoom', null=True, on_delete=models.CASCADE)
     # no_of_questions = models.IntegerField()
     class Meta:
@@ -22,7 +23,7 @@ class MemoryNum(models.Model):
         return str(self.number) 
 
 class MemoryPerformance(models.Model):
-    user_id = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='memory_game_performances')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='memory_game_performances')
     event_id = models.IntegerField()    
     memoryroom = models.ForeignKey('MemoryRoom', null=True, on_delete=models.CASCADE)    
     memorynumber = models.ForeignKey('MemoryNum', null=True, on_delete=models.CASCADE)
@@ -33,7 +34,7 @@ class MemoryPerformance(models.Model):
         db_table = 'MemoryPerformances'
 
     def __str__(self):
-        return str(self.user_id)
+        return str(self.client)
 
 
 class MemoryRoom(models.Model):

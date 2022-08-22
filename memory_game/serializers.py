@@ -17,16 +17,16 @@ class MemoryRoomSerializer(ModelSerializer):
 
 class MemoryPerformanceSerializer(ModelSerializer):    
     memory_number = serializers.SerializerMethodField('get_memory_number')
-    user_id = serializers.SerializerMethodField('get_user_id')
+    client = serializers.SerializerMethodField('get_client')
 
     class Meta:
         model = MemoryPerformance
-        fields = ('id', 'user_id', 'event_id', 'memory_number','inputnumber', 'is_correct')
+        fields = ('id', 'client', 'event_id', 'memory_number','inputnumber', 'is_correct')
 
     def get_memory_number(self, obj):
         return obj.memorynumber.number
 
-    def get_user_id(self, obj):
-        return obj.user_id.user_id
+    def get_client(self, obj):
+        return obj.client.client_id
     
     

@@ -30,14 +30,14 @@ class MemoryNumView(APIView):
             client_id = request.POST.get('client_id')
             category = request.POST.get('inlineRadioOptions')
             number=random_with_N_digits(int(drange))
-            client=Client.objects.get_or_create(user_id=client_id)
+            client=Client.objects.get_or_create(client_id=client_id)
                         
             memoryGame = MemoryNum(
                 category = category,
                 numberdigit = drange,
                 number = number,
                 therapist_id = therapist_id,
-                client_id = Client.objects.get(user_id=client_id)
+                client = Client.objects.get(client_id=client_id)
             )
             memoryGame.save()
             MemoryNum_data = MemoryNumSerializer(memoryGame)
@@ -58,14 +58,14 @@ class MemoryNumView(APIView):
 
                 memoryGame.memoryroom = memory_room
                 memoryGame.save()
-                context={"number":number, "therapist_id":therapist_id,"client_id":Client.objects.get(user_id=client_id).user_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
+                context={"number":number, "therapist_id":therapist_id,"client_id":Client.objects.get(client_id=client_id).client_id,"speed":speed, "room_code" : room_code, "role" : "Therapist"}
                 return Response(context)               
             else:
                 room_codes = Room.objects.all().values('room_code')
                 room_code = random.randint(100000, 999999)
                 while room_code in room_codes:
                     room_code = random.randint(100000, 999999)
-                room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(user_id=client_id))
+                room = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client = Client.objects.get(client_id=client_id))
                 memory_room = MemoryRoom.objects.create(room_id = room.id, memorynum = memoryGame)
 
                 memoryGame.memoryroom = memory_room
@@ -91,7 +91,7 @@ class GetMemoryNum(APIView):
                 number = memory_num.number
                 category = memory_num.category         
                 therapist_id = memory_num.therapist_id
-                client_id = memory_num.client_id
+                client = memory_num.client
                 speed=None
                 if category=="easy":
                     speed=2500
@@ -101,7 +101,7 @@ class GetMemoryNum(APIView):
                     speed=1000
                 else:
                     speed=500               
-                context = {"number" : number, "room_code" : room_code, "role" : "Client", "therapist_id":therapist_id,"client_id":client_id,"speed":speed}
+                context = {"number" : number, "room_code" : room_code, "role" : "Client", "therapist_id":therapist_id,"client_id":client,"speed":speed}
                 return render(request, 'memorynum.html', context=context)
             else:
                 return Response('Room not found.....................')
@@ -117,18 +117,18 @@ class MemoryPerformanceView(APIView):
         event_id=request.data.get('event_id')
         room = Room.objects.filter(room_code = room_code).first()
         memoryroom = MemoryRoom.objects.filter(room_id = room.id).first()
-        memorynum=MemoryNum.objects.filter(number=displaynum, client_id=Client.objects.get(user_id=client_id), memoryroom_id = memoryroom.id).first()
+        memorynum=MemoryNum.objects.filter(number=displaynum, client=Client.objects.get(client_id=client_id), memoryroom_id = memoryroom.id).first()
         if memorynum.number == str(inputnum):
-            mPerformance=MemoryPerformance.objects.create(user_id=Client.objects.get(user_id=client_id),event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnumber = str(inputnum), is_correct=True)
+            mPerformance=MemoryPerformance.objects.create(client=Client.objects.get(client_id=client_id),event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnumber = str(inputnum), is_correct=True)
         else:
-            mPerformance=MemoryPerformance.objects.create(user_id=Client.objects.get(user_id=client_id),event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnumber = str(inputnum),is_correct=False)
+            mPerformance=MemoryPerformance.objects.create(client=Client.objects.get(client_id=client_id),event_id=event_id,memoryroom=memoryroom,memorynumber=memorynum, inputnumber = str(inputnum),is_correct=False)
         memory_performance_data = MemoryPerformanceSerializer(mPerformance)
         context = {"mPerformance" : memory_performance_data.data}
         return Response(context)
 
     def get(self, request, client_id):
         if client_id:
-            mPerformance = MemoryPerformance.objects.filter(user_id = Client.objects.get(user_id=client_id))
+            mPerformance = MemoryPerformance.objects.filter(client = Client.objects.get(client_id=client_id))
             if mPerformance:            
                 correct_answers = mPerformance.filter(is_correct = True).count()
                 memory_performance_data = MemoryPerformanceSerializer(mPerformance, many = True)

@@ -14,7 +14,7 @@ class ClientPerformanceView(APIView):
     
     def get(self, request, client_id):
         if client_id:
-            cPerformance = Client.objects.filter(user_id = client_id)
+            cPerformance = Client.objects.filter(client_id = client_id)
             if cPerformance:                
                 client_performance_data = ClientSerializer(cPerformance, many = True)
                 context = {"performance" : client_performance_data.data}

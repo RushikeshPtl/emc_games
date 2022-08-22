@@ -13,4 +13,4 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ['user_id', 'user_name', 'quiz_performances','quiz_results','memory_game_numbers','memory_game_performances']
+        fields = ['client_id', 'client_name', 'quiz_performances','quiz_results','memory_game_numbers','memory_game_performances']
