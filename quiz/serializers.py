@@ -1,4 +1,3 @@
-
 from typing_extensions import Required
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
@@ -27,6 +26,7 @@ class PerformanceSerializer(ModelSerializer):
     quiz_title = serializers.SerializerMethodField('get_quiz_title')
     question = serializers.SerializerMethodField('get_question')
     answer = serializers.SerializerMethodField('get_answer')
+    user_id = serializers.SerializerMethodField('get_user_id')
 
     class Meta:
         model = Performance
@@ -42,10 +42,15 @@ class PerformanceSerializer(ModelSerializer):
         if obj.answer:
             return obj.answer.answer
 
+    def get_user_id(self, obj):
+        if obj.answer:
+            return obj.user_id.user_id
+
 class ResultSerializer(ModelSerializer):
     quiz_title = serializers.SerializerMethodField('get_quiz_title')
     quiz_category = serializers.SerializerMethodField('get_quiz_category')
     total_questions = serializers.SerializerMethodField('get_total_questions')
+    user_id = serializers.SerializerMethodField('get_user_id')
 
     class Meta:
         model = Result
@@ -59,3 +64,6 @@ class ResultSerializer(ModelSerializer):
     
     def get_total_questions(self, obj):
         return obj.correct_answers + obj.wrong_answers
+
+    def get_user_id(self, obj):
+        return obj.user_id.user_id

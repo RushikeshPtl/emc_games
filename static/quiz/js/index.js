@@ -127,7 +127,7 @@ const createQuizQuestionsPreview = () => {
   $('#add-question .spinner-border').removeClass('d-none')
   $('#add-question .mdc-button__label').addClass('d-none')
   console.log(questions)
-  $.post('/add_question/', questions[0], (resp) => {
+  $.post('/quiz/add_question/', questions[0], (resp) => {
     console.log(resp)
     let parent = $('.quiz-preview-parent')
     $('.quiz-preview-parent').empty()
@@ -222,7 +222,7 @@ const saveQuizData = () => {
     therapist_id: parseInt($('input[name="therapist_id"]').val()),
   }
 
-  $.post('/create_quiz/', data, (resp) => {
+  $.post('/quiz/create_quiz/', data, (resp) => {
     console.log(resp)
     quiz_id = resp.id
   })

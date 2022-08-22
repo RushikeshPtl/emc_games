@@ -128,7 +128,7 @@ const createQuizQuestionsPreview = (data) => {
   $('#add-question .spinner-border').removeClass('d-none')
   $('#add-question .mdc-button__label').addClass('d-none')
   console.log(questions)
-  fetch('/add_question/', {
+  fetch('/quiz/add_question/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -252,7 +252,7 @@ const saveQuizData = () => {
   //     console.log(resp)
   //   })
 
-  $.post('/create_quiz/', data, (resp) => {
+  $.post('/quiz/create_quiz/', data, (resp) => {
     console.log(resp)
     quiz_id = resp.id
   })

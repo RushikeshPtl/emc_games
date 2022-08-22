@@ -1,4 +1,3 @@
-from typing_extensions import Required
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from .models import *
@@ -18,6 +17,7 @@ class MemoryRoomSerializer(ModelSerializer):
 
 class MemoryPerformanceSerializer(ModelSerializer):    
     memory_number = serializers.SerializerMethodField('get_memory_number')
+    user_id = serializers.SerializerMethodField('get_user_id')
 
     class Meta:
         model = MemoryPerformance
@@ -25,5 +25,8 @@ class MemoryPerformanceSerializer(ModelSerializer):
 
     def get_memory_number(self, obj):
         return obj.memorynumber.number
+
+    def get_user_id(self, obj):
+        return obj.user_id.user_id
     
     

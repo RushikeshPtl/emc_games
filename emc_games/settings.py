@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'channels',
     'quiz',
     'memory_game',
+    'client_app',
 ]
 
 MIDDLEWARE = [

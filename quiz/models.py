@@ -2,6 +2,7 @@ from pyexpat import model
 from random import choices
 from django.db import models
 from room.models import Room
+from client_app.models import *
 
 # Create your models here.
 
@@ -55,7 +56,7 @@ class Answer(models.Model):
         return self.answer
 
 class Performance(models.Model):
-    user_id = models.IntegerField()
+    user_id = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='quiz_performances')    
     event_id = models.IntegerField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -80,11 +81,11 @@ class QuizRoom(models.Model):
         db_table = 'QuizRoom'
     
     def __str__(self):
-        return str(self.id)
+        return str(self.id) + " | " +str(self.room)
     
 class Result(models.Model):
     room = models.ForeignKey(QuizRoom, on_delete=models.CASCADE)
-    user_id = models.IntegerField()
+    user_id = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='quiz_results')    
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     correct_answers = models.IntegerField()
     wrong_answers = models.IntegerField()
@@ -97,4 +98,5 @@ class Result(models.Model):
         db_table = 'Result'
     
 
-
+    def __str__(self):
+        return str(self.room)
