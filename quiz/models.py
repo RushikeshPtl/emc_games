@@ -56,7 +56,7 @@ class Answer(models.Model):
         return self.answer
 
 class Performance(models.Model):
-    user = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='quiz_performances')    
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='quiz_performances')    
     event_id = models.IntegerField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -68,7 +68,7 @@ class Performance(models.Model):
         db_table = 'Performaces'
 
     def __str__(self):
-        return str(self.user_id)
+        return str(self.client)
 
 
 class QuizRoom(models.Model):
@@ -85,7 +85,7 @@ class QuizRoom(models.Model):
     
 class Result(models.Model):
     room = models.ForeignKey(QuizRoom, on_delete=models.CASCADE)
-    user = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='quiz_results')    
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, related_name='quiz_results')    
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     correct_answers = models.IntegerField()
     wrong_answers = models.IntegerField()

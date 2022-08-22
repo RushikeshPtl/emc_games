@@ -233,7 +233,7 @@ const saveQuizData = () => {
     quiz_id: parseInt(quiz_id),
     event_id: parseInt(event_id),
     // user_id: parseInt(((Math.random() * 18)+1).toFixed(0)),
-    user_id: user_id,
+    client_id: client_id,
     answers: answers,
     room_code: room_code,
   }
@@ -263,8 +263,11 @@ const saveQuizData = () => {
 }
 
 const showScoreModal = (data) => {
-  role === 'Therapist' && clearInterval(intervalId)
-  $('.performance-show-modal .score-txt').text(`Score- ${data}`)
+  if (role === 'Therapist') {
+    console.log(intervalId)
+    clearInterval(intervalId)
+    $('.performance-show-modal .score-txt').text(`Score- ${data}`)
+  }
 
   if (data === 100) {
     role === 'Client' &&

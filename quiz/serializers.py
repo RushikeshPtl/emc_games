@@ -26,11 +26,11 @@ class PerformanceSerializer(ModelSerializer):
     quiz_title = serializers.SerializerMethodField('get_quiz_title')
     question = serializers.SerializerMethodField('get_question')
     answer = serializers.SerializerMethodField('get_answer')
-    user_id = serializers.SerializerMethodField('get_user_id')
+    client_id = serializers.SerializerMethodField('get_client_id')
 
     class Meta:
         model = Performance
-        fields = ('id', 'user_id', 'event_id', 'quiz_title', 'question', 'answer', 'is_correct')
+        fields = ('id', 'client_id', 'event_id', 'quiz_title', 'question', 'answer', 'is_correct')
 
     def get_quiz_title(self, obj):
         return obj.quiz.title
@@ -42,19 +42,19 @@ class PerformanceSerializer(ModelSerializer):
         if obj.answer:
             return obj.answer.answer
 
-    def get_user_id(self, obj):
+    def get_client_id(self, obj):
         if obj.answer:
-            return obj.user.user_id
+            return obj.client.client_id
 
 class ResultSerializer(ModelSerializer):
     quiz_title = serializers.SerializerMethodField('get_quiz_title')
     quiz_category = serializers.SerializerMethodField('get_quiz_category')
     total_questions = serializers.SerializerMethodField('get_total_questions')
-    user_id = serializers.SerializerMethodField('get_user_id')
+    client_id = serializers.SerializerMethodField('get_client_id')
 
     class Meta:
         model = Result
-        fields = ('id', 'room_id', 'quiz_title', 'quiz_category', 'user_id', 'total_questions', 'correct_answers', 'wrong_answers', 'time_taken', 'time_over')
+        fields = ('id', 'room_id', 'quiz_title', 'quiz_category', 'client_id', 'total_questions', 'correct_answers', 'wrong_answers', 'time_taken', 'time_over')
     
     def get_quiz_title(self, obj):
         return obj.quiz.title
@@ -65,5 +65,5 @@ class ResultSerializer(ModelSerializer):
     def get_total_questions(self, obj):
         return obj.correct_answers + obj.wrong_answers
 
-    def get_user_id(self, obj):
-        return obj.user.user_id
+    def get_client_id(self, obj):
+        return obj.client.client_id

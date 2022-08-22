@@ -1,4 +1,5 @@
 from ast import While
+from http import client
 import json
 from urllib import response
 from django.shortcuts import render
@@ -64,25 +65,21 @@ class GetRoom(APIView):
             room_codes = Room.objects.all().values("room_code")
             quiz = Quiz.objects.get(pk=id)
             therapist_id = random.randint(100000, 999999)
-            client_id = random.randint(11, 18)
-            print(client_id)
-            client=Client.objects.get_or_create(user_id=client_id)
             if quiz:
                 if not request.query_params.get('room'):
-                    quizroom = QuizRoom.objects.filter(event_id = request.query_params.get('event_id'), quiz_id = id).first()
-                    if quizroom:
-                        room_code = quizroom.room.room_code
-                    else:
+                    client_id = random.randint(11, 18)
+                    client = Client.objects.get_or_create(client_id=client_id)
+                    room_code = random.randint(100000, 999999)
+                    while room_code in room_codes:
                         room_code = random.randint(100000, 999999)
-                        while room_code in room_codes:
-                            room_code = random.randint(100000, 999999)
-                        rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(user_id=client_id).id)
-                        room = QuizRoom.objects.create(room_id = rm.id, quiz_id = id, event_id = request.query_params.get('event_id'))
+                    rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(client_id=client_id).id)
+                    room = QuizRoom.objects.create(room_id = rm.id, quiz_id = id, event_id = request.query_params.get('event_id'))
                     context = {'room_code' : room_code, 'role' : 'Therapist', 'client_id':client_id, 'quiz_id' : quiz.id, 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
                     return render(request, 'quiz.html', context=context)
                 else:
                     room_code = request.query_params.get('room')
-                    context = {'room_code' : room_code, 'role' : 'Client','client_id':client_id, 'quiz_id' : quiz.id, 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
+                    client_id = Room.objects.get(room_code = room_code).client_id
+                    context = {'room_code' : room_code, 'role' : 'Client','client_id':Client.objects.get(id = client_id).client_id, 'quiz_id' : quiz.id, 'quiz_title' : quiz.title, 'quiz_category' : quiz.category}
                     return render(request, 'quiz.html', context=context)
             else:
                 return Response("Quiz Not Found......")
@@ -100,23 +97,24 @@ class GetQuestions(APIView):
 
 class PerformanceView(APIView):
     def post(self, request):
-        user_id = request.data.get('user_id')
+        client_id = request.data.get('client_id')
         event_id = request.data.get('event_id')
         quiz_id = request.data.get('quiz_id')
         answers = request.data.get('answers')
         room_code = request.data.get('room_code')
-        print("user_id",user_id)
+        quizroom = QuizRoom.objects.get(room_id = Room.objects.get(room_code = room_code).id)
+        print("user_id",client_id)
         print("room_code",room_code)
         for answer in answers:
             question_id = answer.get('question_id')
             answer_id = answer.get('answer_id')
             if answer_id != '':
                 is_correct = Answer.objects.get(pk = answer_id).is_correct
-                Performance.objects.create(user = Client.objects.get(user_id=user_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct)
+                Performance.objects.create(client = Client.objects.get(client_id=client_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, answer_id = answer_id, is_correct = is_correct, quizroom = quizroom)
             else:
-                Performance.objects.create(user = Client.objects.get(user_id=user_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, is_correct = False)
+                Performance.objects.create(client = Client.objects.get(client_id=client_id), event_id = event_id, quiz_id = quiz_id, question_id = question_id, is_correct = False, quizroom = quizroom)
         # performance = Performance.objects.filter(quiz_id = quiz_id, user_id = Client.objects.get(user_id=user_id), event_id = event_id)
-        performance = Performance.objects.filter(quiz_id = quiz_id, user = Client.objects.get(user_id=user_id))
+        performance = Performance.objects.filter(quiz_id = quiz_id, client = Client.objects.get(client_id=client_id), quizroom = quizroom)
         print(performance)
         total_questions = performance.count()
         correct_answers = performance.filter(is_correct = True).count()
@@ -130,7 +128,7 @@ class PerformanceView(APIView):
         quizroom_id = QuizRoom.objects.get(room_id=room.id).id
         result = Result(
             room_id = quizroom_id,
-            user = Client.objects.get(user_id=user_id),
+            client = Client.objects.get(client_id=client_id),
             quiz = Quiz.objects.get(id=quiz_id),
 
             correct_answers = correct_answers,
@@ -144,9 +142,9 @@ class PerformanceView(APIView):
     
     def get(self, request, quiz_id):
         if quiz_id:
-            user_id = request.data.get("User ID")
+            client_id = request.data.get("Client ID")
             event_id = request.data.get("Event ID")
-            performance = Performance.objects.filter(quiz_id = quiz_id, user_id = user_id, event_id = event_id)
+            performance = Performance.objects.filter(quiz_id = quiz_id, client_id = client_id, event_id = event_id)
             total_questions = performance.count()
             correct_questions = performance.filter(is_correct = True).count()
             performance_data = PerformanceSerializer(performance, many = True)
