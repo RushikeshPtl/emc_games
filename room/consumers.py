@@ -44,3 +44,46 @@ class GameRoom(WebsocketConsumer):
         }))        
         
          
+
+
+class PermissionChannel(WebsocketConsumer):
+    
+    def connect(self):
+        self.room_name = self.scope['url_route']['kwargs']['room_code']
+        self.room_group_name = 'room_%s' %  self.room_name
+        print(self.room_group_name) 
+
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+
+        
+        self.accept()
+
+        
+    def disconnect(self):
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+        
+    def receive(self , text_data):
+        print("Message Received", text_data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,{
+                'type' : 'run',
+                'payload' : text_data
+            }
+        )
+        
+    def run(self , event):
+        data = event['payload']
+        data = json.loads(data)
+
+        self.send(text_data= json.dumps({
+            'payload' : data['data']
+        }))        
+        
+         
