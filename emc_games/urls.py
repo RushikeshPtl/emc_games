@@ -22,6 +22,7 @@ urlpatterns = [
     path('room/' , include('room.urls')),
     path('quiz/', include('quiz.urls')), 
     path('memory-game/', include('memory_game.urls')), 
-    path('client/', include('client_app.urls')), 
+    path('client/', include('client_app.urls')),
+    path('img-puzzle/', include('img_puzzle.urls')),
     path('admin/', admin.site.urls),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT) + static(STATIC_URL, document_root=STATIC_ROOT)
