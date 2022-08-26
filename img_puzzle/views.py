@@ -12,6 +12,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 from .serializers import *
 from rest_framework.response import Response
+import random
 
 # Create your views here.
 def create_pieces(image, pieces):
@@ -39,6 +40,7 @@ def create_pieces(image, pieces):
             else:
                 divisors.append(d)
         d+=1
+    shape = str(rows) + 'x' + str(cols)
     piece_width = img_width/cols
     piece_height = img_height/rows
     pos = 0
@@ -61,9 +63,9 @@ def create_pieces(image, pieces):
                 'PNG',
                 sys.getsizeof(img_io), None
             )
-            shape = str(rows) + 'x' + str(cols)
             puzzlepiece = PuzzlePiece(piece=new_pic, image_id = image.id, position = pos, tile_count = pieces, shape=shape)
             puzzlepiece.save()
+    return shape
 
 
 
@@ -75,11 +77,20 @@ class CreatePuzzleView(APIView):
 
     def post(self, request):
         if request.FILES['image']:
-            image = Image.objects.create(image=request.FILES['image'], uploaded_by=request.POST.get('therapist_id'))
-            pieces = request.POST.get('pieces')
-            create_pieces(image, int(pieces))
+            therapist_id = request.data.get('therapist_id')
+            client_id = random.randint(11, 18)
+            image = Image.objects.create(image=request.FILES['image'], uploaded_by=therapist_id)
+            pieces = request.data.get('pieces')
+            shape = create_pieces(image, int(pieces))
             puzzle = ImagePuzzleSerializer(image, context = {'pieces' : int(pieces)}).data
-            return Response(puzzle)
+            room_codes = Room.objects.all().values("room_code")
+            room_code = random.randint(100000, 999999)
+            while room_code in room_codes:
+                room_code = random.randint(100000, 999999)
+            rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(client_id=client_id).id)
+            room = PuzzleRoom.objects.create(room=rm, image=image, shape=shape)
+            context = {'puzzle_data' : puzzle, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : room.id, 'role' : 'therapist'}
+            return render(request, 'puzzle.html', context=context)
         else:
             return JsonResponse({"MSG":"Please select Image"})
 
@@ -97,5 +108,23 @@ class GetPuzzleView(APIView):
                 JsonResponse({"MSG" : "Puzzle Not Available"})
         else:
             JsonResponse({"MSG" : "Please Provide Valid Image ID"})
+
+class GetPuzzleRoom(APIView):
+
+    def get(self, request, id):
+        if id:
+            puzzle_room = PuzzleRoom.objects.get(pk=id)
+            room_code = puzzle_room.room.room_code
+            image = puzzle_room.image
+            shape = puzzle_room.shape
+            puzzle = ImagePuzzleSerializer(image, context = {'shape' : shape}).data
+            context = {'puzzle_data' : puzzle, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : id, 'role' : 'client'}
+            return render(request, 'puzzle.html', context=context)
+        else:
+            JsonResponse({"MSG" : "Please Provide Valid Puzzle Room ID"})
+
+
+
+
 
 

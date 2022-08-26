@@ -29,8 +29,11 @@ class ImagePuzzleSerializer(ModelSerializer):
     
     def get_puzzle_pieces(self, obj):
         pieces = self.context.get('pieces')
+        shape = self.context.get('shape')
         if pieces:
             return PieceSerializer(obj.puzzlepiece_set.filter(tile_count = pieces).order_by('?'), many = True).data
+        elif shape:
+             return PieceSerializer(obj.puzzlepiece_set.filter(shape = shape).order_by('?'), many = True).data
         else:
             return PieceSerializer(obj.get_pieces().order_by('?'), many = True).data
     
