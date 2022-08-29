@@ -1,4 +1,5 @@
 from json import JSONDecodeError
+import string
 from django.shortcuts import render
 from rest_framework.views import APIView
 import sys
@@ -85,10 +86,11 @@ class CreatePuzzleView(APIView):
             img_resize = img.resize((round(480*proportion), 480))
             img_io = io.BytesIO()
             img_resize.save(img_io, format='PNG')
+            name_str = random.choices(string.ascii_letters + string.digits, k=8)
             resized_img = InMemoryUploadedFile(
                 img_io,
                 'ImageField',
-                name.split('.')[0]+'.png',
+                name.split('.')[0]+'_'+''.join(name_str)+'.png',
                 'PNG',
                 sys.getsizeof(img_io), None
             )
