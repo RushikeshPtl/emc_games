@@ -78,7 +78,21 @@ class CreatePuzzleView(APIView):
             therapist_id = request.data.get('therapist_id')
             client_id = random.randint(11, 18)
             client = Client.objects.get_or_create(client_id=client_id)
-            image = Image.objects.create(image=request.FILES['image'], uploaded_by=therapist_id)
+            name = request.FILES['image'].name
+            img = IMG.open(request.FILES['image'])
+            width, height = img.size[0], img.size[1]
+            proportion = width/height
+            img_resize = img.resize((round(480*proportion), 480))
+            img_io = io.BytesIO()
+            img_resize.save(img_io, format='PNG')
+            resized_img = InMemoryUploadedFile(
+                img_io,
+                'ImageField',
+                name.split('.')[0]+'.png',
+                'PNG',
+                sys.getsizeof(img_io), None
+            )
+            image = Image.objects.create(image=resized_img, uploaded_by=therapist_id)
             pieces = request.data.get('pieces')
             shape = create_pieces(image, int(pieces))
             puzzle = ImagePuzzleSerializer(image, context = {'pieces' : int(pieces)}).data
