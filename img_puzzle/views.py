@@ -67,8 +67,6 @@ def create_pieces(image, pieces):
             puzzlepiece.save()
     return shape
 
-
-
 class CreatePuzzleView(APIView):
     parser_classes = (MultiPartParser, )
 
@@ -79,6 +77,7 @@ class CreatePuzzleView(APIView):
         if request.FILES['image']:
             therapist_id = request.data.get('therapist_id')
             client_id = random.randint(11, 18)
+            client = Client.objects.get_or_create(client_id=client_id)
             image = Image.objects.create(image=request.FILES['image'], uploaded_by=therapist_id)
             pieces = request.data.get('pieces')
             shape = create_pieces(image, int(pieces))
@@ -87,13 +86,12 @@ class CreatePuzzleView(APIView):
             room_code = random.randint(100000, 999999)
             while room_code in room_codes:
                 room_code = random.randint(100000, 999999)
-            rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(client_id=client_id).id)
+            rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client.id)
             room = PuzzleRoom.objects.create(room=rm, image=image, shape=shape)
             context = {'puzzle_data' : puzzle, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : room.id, 'role' : 'therapist'}
             return render(request, 'puzzle.html', context=context)
         else:
-            return JsonResponse({"MSG":"Please select Image"})
-
+            return JsonResponse({"MSG":"Please select an Image"})
 
 class GetPuzzleView(APIView):
 
@@ -122,9 +120,3 @@ class GetPuzzleRoom(APIView):
             return render(request, 'puzzle.html', context=context)
         else:
             JsonResponse({"MSG" : "Please Provide Valid Puzzle Room ID"})
-
-
-
-
-
-
