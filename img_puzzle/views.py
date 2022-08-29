@@ -86,7 +86,7 @@ class CreatePuzzleView(APIView):
             room_code = random.randint(100000, 999999)
             while room_code in room_codes:
                 room_code = random.randint(100000, 999999)
-            rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = client.id)
+            rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(client_id = client_id).id)
             room = PuzzleRoom.objects.create(room=rm, image=image, shape=shape)
             context = {'puzzle_data' : puzzle, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : room.id, 'role' : 'therapist'}
             return render(request, 'puzzle.html', context=context)
