@@ -135,7 +135,7 @@ class GetPuzzleRoom(APIView):
             image = puzzle_room.image
             shape = puzzle_room.shape
             puzzle = ImagePuzzleSerializer(image, context = {'shape' : shape}).data
-            context = {'puzzle_data' : puzzle, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : id, 'therapist_id' : therapist_id, 'client_id' : client_id, 'role' : 'client'}
+            context = {'image_id' : image.id, 'image_path' : image.image.path, 'image_url' : image.image.url, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : id, 'therapist_id' : therapist_id, 'client_id' : client_id, 'role' : 'client'}
             return render(request, 'puzzle.html', context=context)
         else:
             JsonResponse({"MSG" : "Please Provide Valid Puzzle Room ID"})
