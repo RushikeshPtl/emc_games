@@ -114,9 +114,9 @@ class GetPuzzleView(APIView):
 
     def get(self, request, id):
         if id:
-            pieces = request.data.get('pieces')
+            pieces = int(request.query_params.get('pieces'))
             image = Image.objects.get(pk=id)
-            if image and image.get_pieces.filter(tile_count = pieces).count == pieces:
+            if image and image.puzzlepiece_set.filter(tile_count = pieces).count() == pieces:
                 image_data = ImagePuzzleSerializer(image, context={'pieces' : pieces}).data
                 return Response(image_data)
             else:
