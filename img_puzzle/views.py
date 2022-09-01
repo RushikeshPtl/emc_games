@@ -4,6 +4,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 import sys
 from img_puzzle.models import Image, PuzzlePiece
+from quiz.serializers import PerformanceSerializer
 from .views import *
 import pdb
 from django.http import JsonResponse
@@ -104,7 +105,7 @@ class CreatePuzzleView(APIView):
                 room_code = random.randint(100000, 999999)
             rm = Room.objects.create(room_code = room_code, therapist_id = therapist_id, client_id = Client.objects.get(client_id = client_id).id)
             room = PuzzleRoom.objects.create(room=rm, image=image, shape=shape)
-            context = {'puzzle_data' : puzzle, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : room.id, 'role' : 'therapist'}
+            context = {'image_id' : image.id, 'image_path' : image.image.path, 'image_url' : image.image.url, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : room.id, 'therapist_id' : therapist_id, 'client_id' : client_id, 'role' : 'therapist'}
             return render(request, 'puzzle.html', context=context)
         else:
             return JsonResponse({"MSG":"Please select an Image"})
@@ -129,10 +130,26 @@ class GetPuzzleRoom(APIView):
         if id:
             puzzle_room = PuzzleRoom.objects.get(pk=id)
             room_code = puzzle_room.room.room_code
+            therapist_id = puzzle_room.room.therapist_id
+            client_id = puzzle_room.room.client.client_id
             image = puzzle_room.image
             shape = puzzle_room.shape
             puzzle = ImagePuzzleSerializer(image, context = {'shape' : shape}).data
-            context = {'puzzle_data' : puzzle, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : id, 'role' : 'client'}
+            context = {'puzzle_data' : puzzle, 'rows' : shape.split('x')[0], 'columns' : shape.split('x')[1], 'room_code' : room_code, 'puzzle_room' : id, 'therapist_id' : therapist_id, 'client_id' : client_id, 'role' : 'client'}
             return render(request, 'puzzle.html', context=context)
         else:
             JsonResponse({"MSG" : "Please Provide Valid Puzzle Room ID"})
+
+class PerformanceView(APIView):
+
+    def post(self, request):
+        puzzle_room_id = request.data.get('puzzle_room_id')
+        client_id = request.data.get('client_id')
+        time_taken = request.data.get('time_taken')
+        time_over = request.data.get('time_over')
+        is_correct = request.data.get('is_correct')
+        puzzle_room = PuzzleRoom.objects.get(pk=puzzle_room_id)
+        client = Client.objects.get(client_id=client_id)
+        performance = PuzzlePerformance.objects.create(puzzleroom = puzzle_room, client = client, time_taken = time_taken, time_over = time_over, is_correct = is_correct)
+        performance_data = PerformanceSerializer(performance).data
+        return Response(performance_data)

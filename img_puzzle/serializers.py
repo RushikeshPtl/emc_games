@@ -1,4 +1,5 @@
 from dataclasses import fields
+from pyexpat import model
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from .models import *
@@ -42,4 +43,27 @@ class ImagePuzzleSerializer(ModelSerializer):
     
     def get_image_url(self, obj):
         return obj.image.url
+
+class PuzzlePerformanceSerializer(ModelSerializer):
+    image_path = serializers.SerializerMethodField('get_image_path')
+    image_url = serializers.SerializerMethodField('get_image_url')
+    puzzle_shape = serializers.SerializerMethodField('get_puzzle_shape')
+    room_code = serializers.SerializerMethodField('get_room_code')
+
+    class Meta:
+        model = PuzzlePerformance
+        fields = ('id', 'room_code', 'image_path', 'image_url', 'puzzle_shape', 'time_taken', 'time_over', 'is_correct')
+    
+    def get_image_path(self, obj):
+        return obj.puzzleroom.image.image.path
+    
+    def get_image_url(self, obj):
+        return obj.puzzleroom.image.image.url
+    
+    def get_puzzle_shape(self, obj):
+        return obj.puzzleroom.shape
+    
+    def get_room_code(self, obj):
+        return obj.puzzleroom.room.room_code
+
     

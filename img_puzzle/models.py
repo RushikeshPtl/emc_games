@@ -36,3 +36,13 @@ class PuzzleRoom(models.Model):
     class Meta:
         db_table = 'PuzzleRoom'
 
+class PuzzlePerformance(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    puzzleroom = models.ForeignKey(PuzzleRoom, on_delete=models.CASCADE)
+    is_correct = models.BooleanField(default=False)
+    time_taken = models.FloatField()
+    time_over = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'PuzzlePerformance'
+
